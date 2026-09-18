@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NPTEL Machine Learning — Mock Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F1E6; --surface:#FFFFFF; --surface-2:#ECE7D8; --border:#DED6BF;
+  --ink:#232A22; --ink-soft:#5B6459; --accent:#1D6B62; --accent-ink:#FFFFFF;
+  --accent-2:#B3791D; --good:#2E7D4F; --good-bg:#E4F3E9; --bad:#B1443A; --bad-bg:#FBE7E4;
+  --warn:#B3791D; --radius:14px; --radius-sm:9px;
+  --font-serif:'Lora',Georgia,'Times New Roman',serif; --font-sans:'Inter',system-ui,-apple-system,sans-serif;
+  --shadow:0 1px 2px rgba(35,42,34,0.06), 0 4px 14px rgba(35,42,34,0.05);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#181C17; --surface:#20251E; --surface-2:#262B22; --border:#38402F;
+    --ink:#EDEFE7; --ink-soft:#A9B2A0; --accent:#4FBFA8; --accent-ink:#0C1210;
+    --accent-2:#E0AC4C; --good:#69C98B; --good-bg:#1D3327; --bad:#F2897E; --bad-bg:#3A2320;
+    --warn:#E0AC4C; --shadow:0 1px 2px rgba(0,0,0,0.3), 0 4px 18px rgba(0,0,0,0.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#181C17; --surface:#20251E; --surface-2:#262B22; --border:#38402F;
+  --ink:#EDEFE7; --ink-soft:#A9B2A0; --accent:#4FBFA8; --accent-ink:#0C1210;
+  --accent-2:#E0AC4C; --good:#69C98B; --good-bg:#1D3327; --bad:#F2897E; --bad-bg:#3A2320;
+  --warn:#E0AC4C; --shadow:0 1px 2px rgba(0,0,0,0.3), 0 4px 18px rgba(0,0,0,0.35);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:var(--font-sans); background:var(--bg); color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
+h1,h2,h3,h4{font-family:var(--font-serif); font-weight:600; margin:0 0 6px 0; line-height:1.25;}
+p{margin:0 0 8px 0;}
+button{font-family:var(--font-sans);cursor:pointer;}
+a{color:var(--accent);}
+#app{display:flex; min-height:100vh; width:100%;}
+ 
+/* ---- layout ---- */
+.sidebar{
+  width:230px; flex-shrink:0; background:var(--surface); border-right:1px solid var(--border);
+  padding:20px 14px; position:sticky; top:0; height:100vh; overflow-y:auto;
+}
+.brand{display:flex; align-items:center; gap:10px; padding:2px 8px 20px 8px;}
+.brand-badge{width:36px;height:36px;border-radius:10px;background:var(--accent);color:var(--accent-ink);
+  display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-weight:700;font-size:16px;flex-shrink:0;}
+.brand-text{font-family:var(--font-serif);font-weight:700;font-size:15px;line-height:1.15;}
+.brand-text span{display:block;font-family:var(--font-sans);font-weight:500;font-size:11px;color:var(--ink-soft);}
+.nav-item{
+  display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:var(--radius-sm);
+  color:var(--ink-soft); font-weight:500; font-size:14px; margin-bottom:2px; border:none; background:none; width:100%; text-align:left;
+}
+.nav-item:hover{background:var(--surface-2); color:var(--ink);}
+.nav-item.active{background:var(--accent); color:var(--accent-ink);}
+.nav-icon{width:18px;text-align:center;flex-shrink:0;}
+.sidebar-foot{margin-top:18px; padding:12px; border-top:1px solid var(--border); font-size:12px; color:var(--ink-soft);}
+.theme-row{display:flex;gap:6px;margin-top:8px;}
+.theme-btn{flex:1;padding:6px 4px;font-size:11px;border-radius:8px;border:1px solid var(--border);background:var(--surface-2);color:var(--ink-soft);}
+.theme-btn.active{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
+ 
+.main{flex:1; min-width:0; padding:26px 30px 60px 30px;}
+.topbar-mobile{display:none;}
+ 
+@media (max-width: 880px){
+  .sidebar{position:fixed; left:-250px; z-index:40; transition:left .2s ease; box-shadow:var(--shadow);}
+  .sidebar.open{left:0;}
+  .main{padding:70px 14px 40px 14px;}
+  .topbar-mobile{
+    display:flex; position:fixed; top:0; left:0; right:0; height:54px; background:var(--surface);
+    border-bottom:1px solid var(--border); align-items:center; padding:0 12px; z-index:30; gap:10px;
+  }
+  .hamburger{background:none;border:none;font-size:20px;color:var(--ink);padding:6px;}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:35;}
+  .overlay.show{display:block;}
+}
+ 
+.container{max-width:980px; margin:0 auto;}
+.header-row{display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:22px;}
+.page-title{font-size:26px;}
+.page-sub{color:var(--ink-soft); font-size:14.5px; max-width:560px;}
+ 
+.card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow);}
+.grid{display:grid; gap:14px;}
+.grid-stats{grid-template-columns:repeat(4,1fr);}
+.grid-2{grid-template-columns:1fr 1fr;}
+.grid-3{grid-template-columns:1fr 1fr 1fr;}
+@media (max-width:820px){.grid-stats{grid-template-columns:repeat(2,1fr);} .grid-2,.grid-3{grid-template-columns:1fr;}}
+ 
+.stat-card{padding:16px 18px;}
+.stat-label{font-size:12.5px; color:var(--ink-soft); font-weight:500; margin-bottom:6px;}
+.stat-value{font-family:var(--font-serif); font-size:26px; font-weight:700;}
+.stat-sub{font-size:12px; color:var(--ink-soft); margin-top:3px;}
+ 
+.btn{
+  border-radius:10px; border:1px solid var(--border); background:var(--surface-2); color:var(--ink);
+  padding:10px 16px; font-weight:600; font-size:14px; display:inline-flex; align-items:center; gap:8px;
+}
+.btn:hover{filter:brightness(0.97);}
+.btn-primary{background:var(--accent); color:var(--accent-ink); border-color:var(--accent);}
+.btn-primary:disabled{opacity:.5; cursor:not-allowed;}
+.btn-ghost{background:transparent; border-color:var(--border);}
+.btn-danger{background:var(--bad); color:#fff; border-color:var(--bad);}
+.btn-lg{padding:16px 26px; font-size:16px; border-radius:14px;}
+.btn-block{width:100%; justify-content:center;}
+.btn-sm{padding:6px 10px; font-size:12.5px; border-radius:8px;}
+ 
+.badge{display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:999px; font-size:11.5px; font-weight:600; border:1px solid var(--border); background:var(--surface-2); color:var(--ink-soft);}
+.badge-accent{background:var(--accent); color:var(--accent-ink); border-color:var(--accent);}
+.badge-gold{background:var(--accent-2); color:#221800; border-color:var(--accent-2);}
+.badge-good{background:var(--good-bg); color:var(--good); border-color:transparent;}
+.badge-bad{background:var(--bad-bg); color:var(--bad); border-color:transparent;}
+ 
+.week-row{display:flex; align-items:center; gap:12px; padding:7px 0;}
+.week-row .wk-label{width:64px; font-size:13px; font-weight:600; flex-shrink:0;}
+.progress-track{flex:1; height:10px; background:var(--surface-2); border-radius:6px; overflow:hidden;}
+.progress-fill{height:100%; background:var(--accent); border-radius:6px; transition:width .4s ease;}
+.week-row .wk-pct{width:44px; text-align:right; font-size:12px; color:var(--ink-soft); flex-shrink:0;}
+ 
+.section-title{font-size:15px; font-weight:700; margin:26px 0 12px 0; font-family:var(--font-serif);}
+.section-title:first-child{margin-top:0;}
+ 
+.mode-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px;}
+@media (max-width:820px){.mode-grid{grid-template-columns:1fr 1fr;}}
+.mode-card{padding:16px; text-align:left; border-radius:var(--radius); cursor:pointer;}
+.mode-card h4{font-size:14.5px; margin-bottom:4px;}
+.mode-card p{font-size:12.5px; color:var(--ink-soft); margin:0;}
+.mode-card:hover{border-color:var(--accent);}
+ 
+.diff-row{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 18px 0;}
+.diff-btn{padding:8px 16px; border-radius:999px; border:1px solid var(--border); background:var(--surface); font-weight:600; font-size:13px;}
+.diff-btn.active{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+ 
+/* question view */
+.q-top{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;}
+.q-progress-wrap{display:flex; align-items:center; gap:14px; flex:1; min-width:220px;}
+.q-progress-track{flex:1; height:8px; background:var(--surface-2); border-radius:6px; overflow:hidden;}
+.q-progress-fill{height:100%; background:var(--accent);}
+.timer-box{font-family:var(--font-serif); font-weight:700; font-size:18px; padding:6px 14px; border-radius:10px; background:var(--surface-2); border:1px solid var(--border);}
+.timer-box.low{color:var(--bad); border-color:var(--bad);}
+.score-strip{display:flex; gap:18px; font-size:13px; color:var(--ink-soft); margin-bottom:16px; flex-wrap:wrap;}
+.score-strip b{color:var(--ink);}
+.q-tags{display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;}
+.q-text{font-size:17px; line-height:1.55; margin:6px 0 18px 0; font-weight:500;}
+.opt{
+  display:flex; align-items:flex-start; gap:12px; padding:13px 15px; border:1.5px solid var(--border);
+  border-radius:12px; margin-bottom:9px; cursor:pointer; background:var(--surface); font-size:14.5px; line-height:1.45;
+}
+.opt:hover{border-color:var(--accent);}
+.opt.selected{border-color:var(--accent); background:var(--surface-2);}
+.opt.correct{border-color:var(--good); background:var(--good-bg);}
+.opt.incorrect{border-color:var(--bad); background:var(--bad-bg);}
+.opt .marker{width:19px;height:19px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.opt.msq .marker{border-radius:5px;}
+.opt.selected .marker{border-color:var(--accent); background:var(--accent); color:var(--accent-ink);}
+.opt.correct .marker{border-color:var(--good); background:var(--good); color:#fff;}
+.opt.incorrect .marker{border-color:var(--bad); background:var(--bad); color:#fff;}
+.num-input{width:220px; padding:13px 14px; font-size:15px; border-radius:10px; border:1.5px solid var(--border); background:var(--surface); color:var(--ink);}
+.num-input:focus{outline:none; border-color:var(--accent);}
+ 
+.feedback-panel{margin-top:18px; padding:16px 18px; border-radius:var(--radius); border:1.5px solid; animation:pop .18s ease;}
+@keyframes pop{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+.feedback-panel.ok{border-color:var(--good); background:var(--good-bg);}
+.feedback-panel.no{border-color:var(--bad); background:var(--bad-bg);}
+.feedback-head{display:flex; align-items:center; gap:8px; font-weight:700; font-size:15px; margin-bottom:8px;}
+.feedback-panel.ok .feedback-head{color:var(--good);}
+.feedback-panel.no .feedback-head{color:var(--bad);}
+.feedback-row{font-size:13.5px; margin-bottom:6px;}
+.feedback-row b{font-weight:700;}
+.exp-box{margin-top:8px; padding-top:8px; border-top:1px solid rgba(0,0,0,.08); font-size:13.5px; color:var(--ink-soft);}
+ 
+.footer-actions{display:flex; justify-content:flex-end; gap:10px; margin-top:18px;}
+ 
+/* result page */
+.result-hero{text-align:center; padding:34px 20px;}
+.result-score{font-family:var(--font-serif); font-size:52px; font-weight:700; margin:6px 0;}
+.result-max{font-size:16px; color:var(--ink-soft);}
+.result-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:20px;}
+@media (max-width:700px){.result-grid{grid-template-columns:repeat(2,1fr);}}
+ 
+.bar-chart-row{display:flex; align-items:center; gap:12px; padding:6px 0;}
+.bar-chart-row .lab{width:110px; font-size:13px; flex-shrink:0;}
+.bar-chart-row .val{width:44px; text-align:right; font-size:12px; color:var(--ink-soft); flex-shrink:0;}
+ 
+.qbank-item{padding:14px 16px; border-bottom:1px solid var(--border);}
+.qbank-item:last-child{border-bottom:none;}
+.qbank-top{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:6px; align-items:center;}
+.qbank-q{font-size:14px; font-weight:500;}
+.filter-bar{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;}
+.chip{padding:6px 12px; border-radius:999px; border:1px solid var(--border); background:var(--surface); font-size:12.5px; font-weight:600; color:var(--ink-soft);}
+.chip.active{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+.search-input{width:100%; padding:11px 14px; border-radius:10px; border:1px solid var(--border); background:var(--surface); color:var(--ink); font-size:14px; margin-bottom:14px;}
+.search-input:focus{outline:none; border-color:var(--accent);}
+ 
+.settings-row{display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--border); gap:14px; flex-wrap:wrap;}
+.settings-row:last-child{border-bottom:none;}
+.settings-label{font-size:14px; font-weight:600;}
+.settings-hint{font-size:12px; color:var(--ink-soft); font-weight:400; margin-top:2px;}
+.switch{position:relative; width:44px; height:25px; flex-shrink:0;}
+.switch input{opacity:0;width:0;height:0;}
+.slider-toggle{position:absolute;inset:0;background:var(--surface-2);border:1px solid var(--border);border-radius:999px;transition:.15s;}
+.slider-toggle:before{content:"";position:absolute;height:19px;width:19px;left:2px;top:2px;background:var(--surface);border-radius:50%;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+input:checked + .slider-toggle{background:var(--accent); border-color:var(--accent);}
+input:checked + .slider-toggle:before{transform:translateX(19px); background:#fff;}
+.select, .number-input{padding:8px 10px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--ink); font-size:13.5px;}
+.week-check-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:8px;}
+@media (max-width:600px){.week-check-grid{grid-template-columns:repeat(2,1fr);}}
+.week-check{display:flex;align-items:center;gap:6px;font-size:13px;padding:7px 9px;border:1px solid var(--border);border-radius:8px;}
+ 
+.history-item{display:flex; justify-content:space-between; align-items:center; padding:14px 4px; border-bottom:1px solid var(--border); cursor:pointer; gap:10px;}
+.history-item:hover{background:var(--surface-2);}
+.history-item:last-child{border-bottom:none;}
+.empty-state{text-align:center; padding:50px 20px; color:var(--ink-soft);}
+.empty-state .big{font-size:38px; margin-bottom:10px;}
+.banner{padding:13px 16px; border-radius:12px; background:var(--surface-2); border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:20px; flex-wrap:wrap; font-size:13.5px;}
+.small-note{font-size:12px; color:var(--ink-soft); margin-top:4px;}
+</style>
+</head>
+<body>
+ 
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<div id="app">
+  <div class="topbar-mobile">
+    <button class="hamburger" onclick="openSidebar()">☰</button>
+    <div style="font-family:var(--font-serif);font-weight:700;font-size:15px;">NPTEL ML Mock Test</div>
+  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-badge">ML</div>
+      <div class="brand-text">NPTEL ML<span>Mock Test Dashboard</span></div>
+    </div>
+    <div id="nav-list"></div>
+    <div class="sidebar-foot">
+      <div>Question bank: <b id="nav-qcount">0</b> questions across 8 weeks.</div>
+      <div class="theme-row">
+        <button class="theme-btn" id="theme-light" onclick="setTheme('light')">Light</button>
+        <button class="theme-btn" id="theme-dark" onclick="setTheme('dark')">Dark</button>
+        <button class="theme-btn" id="theme-auto" onclick="setTheme('auto')">Auto</button>
+      </div>
+    </div>
+  </nav>
+  <main class="main"><div class="container" id="view"></div></main>
+</div>
+ 
+<script>
+/* =========================================================================
+   DATA — question bank grounded strictly in the 8 uploaded NPTEL PDFs
+   ========================================================================= */
+const WEEK_TITLES = {
+  1:"Introduction to Machine Learning",
+  2:"Linear Regression & Decision Trees",
+  3:"Instance-Based Learning & Feature Selection",
+  4:"Probability & Bayesian Learning",
+  5:"Logistic Regression & Support Vector Machines",
+  6:"Neural Networks",
+  7:"Computational Learning Theory & Ensembles",
+  8:"Clustering"
+};
+ 
+const QUESTIONS = [
+/* ---------------- WEEK 1 ---------------- */
+{id:"w1-01",week:1,type:"mcq",diff:"Easy",q:"According to Mitchell's definition given in the course, a computer program is said to learn from experience E with respect to a task T and performance measure P if:",opts:["It is programmed with explicit rules for every possible input","Its performance at tasks in T, as measured by P, improves with experience E","It memorizes all training examples without generalizing","It uses only unsupervised algorithms"],ans:[1],exp:"Mitchell's classic definition states that a program learns if its performance at tasks in T, measured by P, improves with experience E.",src:"Week 1 · Introduction"},
+{id:"w1-02",week:1,type:"mcq",diff:"Easy",q:"In supervised learning, the learner is given:",opts:["Only unlabeled inputs X","Input-output pairs (X, y) as pre-classified training examples","Rewards and punishments for actions","A fixed set of clustering rules"],ans:[1],exp:"Supervised learning uses pre-classified training examples: pairs of inputs X and outputs y.",src:"Week 1 · Types of Learning"},
+{id:"w1-03",week:1,type:"mcq",diff:"Easy",q:"In reinforcement learning, the agent decides what to do based on:",opts:["Labeled training examples","Rewards and punishments received from the environment","Clustering of unlabeled inputs","A pre-specified decision tree"],ans:[1],exp:"Reinforcement learning determines actions to take based on rewards and punishments from the environment.",src:"Week 1 · Types of Learning"},
+{id:"w1-04",week:1,type:"mcq",diff:"Easy",q:"When the target feature Y to be predicted is continuous, the supervised learning task is called:",opts:["Classification","Regression","Clustering","Reinforcement learning"],ans:[1],exp:"Regression is used when Y is continuous; classification is used when Y is discrete.",src:"Week 1 · Types of Learning"},
+{id:"w1-05",week:1,type:"mcq",diff:"Easy",q:"When the target feature Y to be predicted is discrete, the supervised learning task is called:",opts:["Regression","Classification","Dimensionality reduction","Association rule mining"],ans:[1],exp:"Classification is used when Y is discrete; regression when Y is continuous.",src:"Week 1 · Types of Learning"},
+{id:"w1-06",week:1,type:"mcq",diff:"Medium",q:"Preferring the simplest hypothesis consistent with the data (Occam's Razor) is an example of which type of inductive bias?",opts:["Restriction bias","Preference bias","Sampling bias","Confirmation bias"],ans:[1],exp:"Occam's Razor imposes an ordering (preference) on the hypothesis space rather than eliminating hypotheses outright — it is a preference bias.",src:"Week 1 · Inductive Bias"},
+{id:"w1-07",week:1,type:"mcq",diff:"Medium",q:"A model that is too simple to capture the relevant characteristics of the data, with high training error and high test error, is said to be:",opts:["Overfitting","Underfitting","Well-regularized","Bayes optimal"],ans:[1],exp:"Underfitting is characterized by high bias, low variance, and high training and test error.",src:"Week 1 · Overfitting/Underfitting"},
+{id:"w1-08",week:1,type:"mcq",diff:"Medium",q:"A model that fits irrelevant characteristics (noise) in the training data, showing low training error but high test error, is said to be:",opts:["Underfitting","Overfitting","Perfectly generalized","Restriction biased"],ans:[1],exp:"Overfitting shows low bias, high variance, low training error, and high test error.",src:"Week 1 · Overfitting/Underfitting"},
+{id:"w1-09",week:1,type:"mcq",diff:"Medium",q:"In k-fold cross-validation, in each of the k rounds:",opts:["All the data is used for both training and testing simultaneously","1/k of the data is held out as a test set and the remaining examples are used for training","The model is trained only once on the full dataset","k different models are trained on entirely different problems"],ans:[1],exp:"K-fold cross-validation splits data into k subsets; each round holds out 1/k as test data and trains on the rest.",src:"Week 1 · Evaluation & Cross-validation"},
+{id:"w1-10",week:1,type:"mcq",diff:"Medium",q:"According to the Inductive Learning Hypothesis, a hypothesis that approximates the target function well over a sufficiently large set of training examples will also:",opts:["Always achieve zero training error","Approximate the target function well over other unobserved examples","Become the most general hypothesis in H","Require re-training on every new example"],ans:[1],exp:"The Inductive Learning Hypothesis states that good approximation over enough training data generalizes to unobserved examples.",src:"Week 1 · Inductive Bias"},
+{id:"w1-11",week:1,type:"mcq",diff:"Medium",q:"The hypothesis space H, as described in the course, is best defined as:",opts:["The set of all training examples collected","The set of all hypotheses that can, in principle, be output by a learning algorithm","The single correct target function f","A validation dataset used to tune parameters"],ans:[1],exp:"The hypothesis space is the set of all hypotheses a learning algorithm could, in principle, produce.",src:"Week 1 · Hypothesis Space"},
+{id:"w1-12",week:1,type:"msq",diff:"Easy",q:"Which of the following are broad types of machine learning discussed in the course? (Select all that apply)",opts:["Supervised Learning","Unsupervised Learning","Reinforcement Learning","Quantum Learning"],ans:[0,1,2],exp:"The course describes Supervised, Unsupervised, Semi-supervised, and Reinforcement Learning; 'Quantum Learning' is not discussed.",src:"Week 1 · Types of Learning"},
+{id:"w1-13",week:1,type:"msq",diff:"Medium",q:"Which of the following are given in the course as types/examples of inductive bias? (Select all that apply)",opts:["Minimum description length","Maximum margin (as used in SVM)","Occam's Razor","Maximum feature count"],ans:[0,1,2],exp:"The slides list Occam's razor, minimum description length, and maximum margin as examples of inductive bias.",src:"Week 1 · Inductive Bias"},
+{id:"w1-14",week:1,type:"msq",diff:"Medium",q:"According to the course, generalization error can be decomposed into which of the following components?",opts:["Bias","Variance","Regularization strength","Learning rate"],ans:[0,1],exp:"The course describes bias and variance as the two components of generalization error.",src:"Week 1 · Overfitting/Underfitting"},
+{id:"w1-15",week:1,type:"numeric",diff:"Medium",q:"A classifier evaluated on a test set produces the confusion matrix values TP=40, FP=10, FN=5, TN=45. Using Accuracy = (TP+TN)/(TP+FP+FN+TN), what is the accuracy (as a decimal, e.g. 0.85)?",ans:{v:0.85,tol:0.01},exp:"Accuracy = (40+45)/(40+10+5+45) = 85/100 = 0.85.",src:"Week 1 · Evaluation (Confusion Matrix)"},
+{id:"w1-16",week:1,type:"numeric",diff:"Hard",q:"For the confusion matrix TP=50, FP=10, FN=20, TN=20, compute Precision = TP/(TP+FP). Give the answer as a decimal rounded to 2 places.",ans:{v:0.83,tol:0.02},exp:"Precision = 50/(50+10) = 50/60 ≈ 0.83.",src:"Week 1 · Evaluation (Confusion Matrix)"},
+{id:"w1-17",week:1,type:"numeric",diff:"Hard",q:"If there are N = 3 binary input features, the number of possible Boolean functions over these features is 2^(2^N). What is this value for N = 3?",ans:{v:256,tol:0},exp:"2^(2^3) = 2^8 = 256, as stated in the Hypothesis Spaces discussion.",src:"Week 1 · Hypothesis Space"},
+ 
+/* ---------------- WEEK 2 ---------------- */
+{id:"w2-01",week:2,type:"mcq",diff:"Easy",q:"In the simple linear regression equation Y = β0 + β1X + ε, the term β0 represents:",opts:["The slope of the regression line","The intercept — the average value of Y when X = 0","The random error term","The correlation coefficient"],ans:[1],exp:"β0 is the population Y-intercept — the average value of Y when all X's are zero.",src:"Week 2 · Linear Regression"},
+{id:"w2-02",week:2,type:"mcq",diff:"Easy",q:"The method of least squares chooses the regression line that:",opts:["Maximizes the sum of squared residuals","Minimizes the sum of squared residuals between the data points and the line","Minimizes the number of data points used","Maximizes the intercept term"],ans:[1],exp:"Least squares finds the line minimizing the sum of squared vertical distances (residuals).",src:"Week 2 · Linear Regression"},
+{id:"w2-03",week:2,type:"mcq",diff:"Medium",q:"The LMS (delta rule) update for a single training example (x,y), as derived in the course, is given by:",opts:["βj = βj − α(y − h(x))xj","βj = βj + α(y − h(x))xj","βj = βj + α·h(x)","βj = βj − α·y"],ans:[1],exp:"The slides derive βj = βj + α(y(i) − h(x(i)))xj(i) as the LMS update rule.",src:"Week 2 · Linear Regression"},
+{id:"w2-04",week:2,type:"mcq",diff:"Easy",q:"Batch gradient descent, as described in the course, updates parameters by:",opts:["Looking at only one randomly chosen example per step","Looking at every training example on each step before updating","Never using the training data","Updating parameters only once at the very end"],ans:[1],exp:"Batch gradient descent sums the error gradient over every example before each update.",src:"Week 2 · Linear Regression"},
+{id:"w2-05",week:2,type:"mcq",diff:"Easy",q:"Stochastic gradient descent, as described in the course, updates the parameters:",opts:["Only after seeing the entire training set once","Whenever a training point is encountered, using the gradient from that example alone","Using a closed-form matrix inversion only","Only for classification tasks, never regression"],ans:[1],exp:"Stochastic gradient descent updates parameters using the gradient from each individual training example as it is encountered.",src:"Week 2 · Linear Regression"},
+{id:"w2-06",week:2,type:"mcq",diff:"Easy",q:"In a decision tree, a leaf node:",opts:["Specifies a test on some attribute","Indicates the classification (or prediction) of an example","Is always the root of the tree","Has multiple children nodes"],ans:[1],exp:"A leaf node indicates the classification of an example; decision nodes specify attribute tests.",src:"Week 2 · Decision Trees"},
+{id:"w2-07",week:2,type:"mcq",diff:"Easy",q:"The entropy of a sample S, as discussed in the course, is 0 when:",opts:["The sample has equal numbers of positive and negative examples","The outcome in the sample is completely certain (pure)","The sample is empty","The sample has maximum uncertainty"],ans:[1],exp:"Entropy is 0 when the outcome is certain, and maximum when there is no knowledge / any outcome is equally possible.",src:"Week 2 · Decision Trees (Entropy)"},
+{id:"w2-08",week:2,type:"mcq",diff:"Medium",q:"In the ID3 worked example from the course (the PlayTennis dataset), which attribute has the highest information gain and is chosen for the root split?",opts:["Humidity","Wind","Outlook","Temperature"],ans:[2],exp:"The slides compute Gain(S,Outlook)=0.247, which is higher than Humidity (0.151), Wind (0.048), and Temperature (0.029).",src:"Week 2 · ID3 Algorithm"},
+{id:"w2-09",week:2,type:"mcq",diff:"Easy",q:"The GINI index, as introduced in the course, is used as a measure of:",opts:["Regression accuracy","Node impurity for decision tree splitting","Neural network convergence","Kernel similarity"],ans:[1],exp:"GINI index measures node impurity, used to decide splits in decision trees.",src:"Week 2 · Decision Trees"},
+{id:"w2-10",week:2,type:"msq",diff:"Medium",q:"Which of the following are described in the course as strategies to avoid overfitting in decision trees? (Select all that apply)",opts:["Pre-pruning (stop growing early)","Post-pruning (grow full tree, then remove nodes)","Always growing the tree to maximum depth","Reduced-error pruning using a validation set"],ans:[0,1,3],exp:"The course describes pre-pruning, post-pruning, and cross-validation-based reduced-error pruning; always growing to max depth increases overfitting.",src:"Week 2 · Overfitting"},
+{id:"w2-11",week:2,type:"mcq",diff:"Easy",q:"L2-regularization in linear regression, as named in the course, is also known as:",opts:["Lasso regression","Ridge regression","Logistic regression","Bagging"],ans:[1],exp:"L2-regularization is called Ridge regression; L1-regularization is Lasso.",src:"Week 2 · Regularization"},
+{id:"w2-12",week:2,type:"mcq",diff:"Medium",q:"A hypothesis h is said to overfit the training data if there exists another hypothesis h' such that:",opts:["h has larger error than h' on both training and test data","h has smaller error than h' on training data, but larger error than h' on test data","h and h' always perform identically","h has smaller error than h' on test data only"],ans:[1],exp:"This is the course's exact definition of overfitting relative to another hypothesis h'.",src:"Week 2 · Overfitting"},
+{id:"w2-13",week:2,type:"mcq",diff:"Hard",q:"According to the 'Triple Trade-Off' discussed in the course, as the complexity of hypothesis space H increases (training set size fixed), the generalization error E on new data typically:",opts:["Keeps decreasing indefinitely","First decreases, then increases (overfitting)","Remains constant throughout","Increases then decreases"],ans:[1],exp:"The Triple Trade-Off states E first decreases then increases as hypothesis complexity increases.",src:"Week 2 · Overfitting"},
+{id:"w2-14",week:2,type:"numeric",diff:"Medium",q:"If a training sample S has equal numbers of positive and negative examples (p+ = p− = 0.5), what is Entropy(S)? (Entropy(S) = −p+log2 p+ − p−log2 p−)",ans:{v:1,tol:0.02},exp:"With p+ = p− = 0.5, Entropy(S) = −0.5log2(0.5) − 0.5log2(0.5) = 1, the maximum possible entropy.",src:"Week 2 · Decision Trees (Entropy)"},
+{id:"w2-15",week:2,type:"numeric",diff:"Hard",q:"In the course's worked example with S=[9+,5-] (Entropy(S)=0.940), splitting on Outlook gives Gain(S,Outlook) = 0.940 − (5/14)(0.971) − (4/14)(0.0) − (5/14)(0.971). What is this information gain, as stated in the slides (to 3 decimal places)?",ans:{v:0.247,tol:0.01},exp:"The slides state Gain(S,Outlook) = 0.247.",src:"Week 2 · ID3 Algorithm"},
+{id:"w2-16",week:2,type:"numeric",diff:"Hard",q:"Splitting S=[9+,5-] (Entropy=0.940) on Humidity gives 7 examples with entropy 0.985 and 7 examples with entropy 0.592. Using Gain(S,Humidity)=0.940−(7/14)(0.985)−(7/14)(0.592), what is the information gain (to 3 decimal places)?",ans:{v:0.151,tol:0.01},exp:"The slides state Gain(S,Humidity) = 0.151, greater than Gain(S,Wind) = 0.048.",src:"Week 2 · ID3 Algorithm"},
+ 
+/* ---------------- WEEK 3 ---------------- */
+{id:"w3-01",week:3,type:"mcq",diff:"Easy",q:"In basic k-nearest neighbor classification, the predicted class for a test example is:",opts:["The class of the single farthest training example","The most frequent class among the k closest training examples","Always the majority class in the entire training set","Determined by a decision tree built from the k neighbors"],ans:[1],exp:"Basic k-NN predicts the most frequent class among the k nearest training examples.",src:"Week 3 · Instance-Based Learning"},
+{id:"w3-02",week:3,type:"mcq",diff:"Easy",q:"Choosing a larger value of k in k-NN generally:",opts:["Makes the classifier more sensitive to noise","Makes the classifier less sensitive to noise, particularly class noise","Has no effect on noise sensitivity","Always reduces accuracy"],ans:[1],exp:"Larger k is less sensitive to noise but may lose fine structure; smaller k captures fine structure but is noisier.",src:"Week 3 · Instance-Based Learning"},
+{id:"w3-03",week:3,type:"mcq",diff:"Medium",q:"As the size of the training set approaches infinity and k grows large, k-NN approaches the performance of:",opts:["A linear regression model","The Bayes optimal classifier","A single decision tree","Random guessing"],ans:[1],exp:"The course states that as training data and k both grow large, k-NN becomes Bayes optimal.",src:"Week 3 · Instance-Based Learning"},
+{id:"w3-04",week:3,type:"mcq",diff:"Medium",q:"The 'curse of dimensionality' in the context of k-NN refers to the phenomenon that:",opts:["Distances between points become smaller and more distinguishable as dimensions increase","As the number of dimensions increases, distances between points become larger and more uniform, reducing usefulness","Adding more dimensions always improves classification accuracy","k-NN cannot be applied to more than 2 dimensions"],ans:[1],exp:"As dimensionality increases, distances become larger and more uniform, making nearest-neighbor comparisons less meaningful.",src:"Week 3 · Curse of Dimensionality"},
+{id:"w3-05",week:3,type:"mcq",diff:"Medium",q:"Feature Selection differs from Feature Extraction in that Feature Selection:",opts:["Projects original features into a new, transformed lower-dimensional space","Chooses a subset of the original features while ignoring the rest","Always increases the number of features","Requires no labeled data at all"],ans:[1],exp:"Feature Selection picks a subset of the original features F; Feature Extraction projects to new dimensions.",src:"Week 3 · Feature Selection"},
+{id:"w3-06",week:3,type:"mcq",diff:"Easy",q:"Forward search, as a subset-selection strategy for feature selection, starts from:",opts:["The full set of all features","An empty set of features, adding features one at a time","A randomly chosen subset of features","The feature with the highest variance only"],ans:[1],exp:"Forward search starts from the empty set and adds the feature that most improves validation performance at each step.",src:"Week 3 · Feature Selection"},
+{id:"w3-07",week:3,type:"mcq",diff:"Easy",q:"The Pearson correlation coefficient, used for univariate feature selection, lies in the range:",opts:["0 to 1","−1 to +1","−∞ to +∞","0 to 100"],ans:[1],exp:"Pearson correlation r ranges from −1 (perfect negative correlation) to +1 (perfect positive correlation).",src:"Week 3 · Feature Selection"},
+{id:"w3-08",week:3,type:"mcq",diff:"Medium",q:"PCA (Principal Component Analysis) chooses projection directions that:",opts:["Minimize the total variance of the projected data","Maximize the total variance of the data while being orthogonal to each other","Always align with the original feature axes","Maximize between-class distance only"],ans:[1],exp:"PCA selects orthogonal directions that maximize total variance in the data.",src:"Week 3 · Feature Extraction (PCA)"},
+{id:"w3-09",week:3,type:"mcq",diff:"Medium",q:"Unlike PCA, Linear Discriminant Analysis (LDA) explicitly uses which additional information when choosing a projection?",opts:["Class label information (between-class and within-class distances)","The covariance of noise only","The number of samples in the test set","Kernel functions"],ans:[0],exp:"LDA maximizes between-class distance and minimizes within-class distance, using class labels — information PCA does not use.",src:"Week 3 · LDA"},
+{id:"w3-10",week:3,type:"mcq",diff:"Medium",q:"Item-based collaborative filtering was introduced mainly to address which limitation of user-based k-NN collaborative filtering?",opts:["Lack of accuracy on sparse data","Lack of scalability due to real-time comparison with all user records","Inability to handle explicit ratings","Inability to use the Pearson correlation coefficient"],ans:[1],exp:"User-based CF requires comparing the target user to all other users in real time, which does not scale; item-based CF avoids this.",src:"Week 3 · Collaborative Filtering"},
+{id:"w3-11",week:3,type:"mcq",diff:"Easy",q:"In user-based collaborative filtering, the similarity between two users' rating profiles is typically computed using:",opts:["The Pearson correlation coefficient","The GINI index","Information gain","The sigmoid function"],ans:[0],exp:"The course uses Pearson's correlation coefficient to compute similarity between users' rating vectors.",src:"Week 3 · Collaborative Filtering"},
+{id:"w3-12",week:3,type:"mcq",diff:"Easy",q:"In weighted Euclidean distance for k-NN, assigning a weight of zero to an attribute means that attribute:",opts:["Is the most important attribute","Does not matter / has no effect on the distance","Must be normalized separately","Is treated as categorical"],ans:[1],exp:"Zero weight means the attribute contributes nothing to the distance calculation.",src:"Week 3 · Instance-Based Learning"},
+{id:"w3-13",week:3,type:"mcq",diff:"Medium",q:"In distance-weighted k-NN, the weight given to a neighbor is typically:",opts:["Directly proportional to its distance from the test point","Inversely related to its distance from the test point (closer neighbors weigh more)","Equal for all neighbors regardless of distance","Based only on the neighbor's class label"],ans:[1],exp:"Distance-weighted k-NN gives more weight to closer neighbors, e.g. wk = 1/Dist(ck, ctest).",src:"Week 3 · Instance-Based Learning"},
+{id:"w3-14",week:3,type:"msq",diff:"Medium",q:"Which of the following are listed in the course as advantages of memory-based (instance-based) learning methods? (Select all that apply)",opts:["Lazy learning — no work needed until a prediction is required","Very efficient cross-validation","Intelligible/explainable to users","Performs best in very high-dimensional spaces"],ans:[0,1,2],exp:"The slides list lazy learning, efficient cross-validation, and intelligibility as advantages; high dimensionality is actually a weakness.",src:"Week 3 · Instance-Based Learning"},
+{id:"w3-15",week:3,type:"numeric",diff:"Medium",q:"According to the course, memory-based (instance-based) learning methods often work best with how many or fewer feature dimensions?",ans:{v:25,tol:0},exp:"The slides state these methods often work best with 25 or fewer dimensions.",src:"Week 3 · Instance-Based Learning (Weaknesses)"},
+{id:"w3-16",week:3,type:"mcq",diff:"Hard",q:"Which of these best distinguishes Mahalanobis distance from plain Euclidean distance, as discussed in the course?",opts:["Mahalanobis distance accounts for covariance between features (Σ⁻¹), while Euclidean distance assumes independent, equally scaled features","Euclidean distance always outperforms Mahalanobis distance","Mahalanobis distance cannot be used for classification","They are mathematically identical"],ans:[0],exp:"Mahalanobis distance uses the inverse covariance matrix to account for correlations and different scales among features.",src:"Week 3 · Distance Measures"},
+ 
+/* ---------------- WEEK 4 ---------------- */
+{id:"w4-01",week:4,type:"mcq",diff:"Easy",q:"Bayes' Theorem, as presented in the course, states that P(h|D) equals:",opts:["P(D)·P(h)","P(D|h)·P(h) / P(D)","P(h)/P(D|h)","P(D) − P(h)"],ans:[1],exp:"Bayes' rule: P(h|D) = P(D|h)P(h)/P(D).",src:"Week 4 · Bayesian Learning"},
+{id:"w4-02",week:4,type:"mcq",diff:"Medium",q:"The Maximum Likelihood (ML) hypothesis hML = argmax P(D|h) is obtained from the MAP hypothesis when:",opts:["P(D) is assumed to be zero","Every hypothesis in H is assumed equally probable a priori","The training data D is empty","H contains only one hypothesis"],ans:[1],exp:"If every hypothesis is equally likely a priori, hMAP reduces to hML, which only considers the likelihood P(D|h).",src:"Week 4 · Bayesian Learning"},
+{id:"w4-03",week:4,type:"mcq",diff:"Easy",q:"The key simplifying assumption made by the Naïve Bayes classifier is that:",opts:["All features are perfectly correlated","All input features are conditionally independent given the class label","There is only one possible class","The prior probability of every class is equal"],ans:[1],exp:"Naïve Bayes assumes conditional independence of all features given the class.",src:"Week 4 · Naïve Bayes"},
+{id:"w4-04",week:4,type:"mcq",diff:"Medium",q:"The Bayes Optimal Classifier makes its prediction by combining the votes of all hypotheses in H, each weighted by:",opts:["The hypothesis's training accuracy only","P(vj|hi)·P(hi|D), summed over all hypotheses","A fixed uniform weight of 1/|H|","The number of features used by that hypothesis"],ans:[1],exp:"Bayes optimal classification computes argmax over vj of Σ P(vj|hi)P(hi|D) across all hypotheses hi.",src:"Week 4 · Bayes Optimal Classifier"},
+{id:"w4-05",week:4,type:"mcq",diff:"Medium",q:"The Gibbs Algorithm, as an alternative to the (computationally expensive) Bayes Optimal Classifier, works by:",opts:["Averaging the predictions of all hypotheses equally","Randomly choosing a single hypothesis according to the posterior P(h|D) and using it to classify","Selecting the hypothesis with the lowest prior probability","Ignoring the posterior distribution entirely"],ans:[1],exp:"Gibbs Algorithm picks one hypothesis at random according to P(h|D) and uses it for classification.",src:"Week 4 · Bayes Optimal Classifier"},
+{id:"w4-06",week:4,type:"mcq",diff:"Medium",q:"In a Bayesian Network, the lack of a direct arc between two variable nodes denotes:",opts:["That the two variables are perfectly correlated","A conditional independence relation between them","That one variable causes the other directly","That both variables are unobservable"],ans:[1],exp:"An absent arc in a Bayesian Network denotes conditional independence between the corresponding variables.",src:"Week 4 · Bayesian Networks"},
+{id:"w4-07",week:4,type:"mcq",diff:"Medium",q:"In a Hidden Markov Model (HMM), the observation Yt is assumed to be:",opts:["Independent of the hidden state St","Conditionally independent of all other variables, given the current hidden state St","Directly equal to the hidden state St","Dependent on all future hidden states"],ans:[1],exp:"HMM assumes Yt is conditionally independent of everything else given St, and the hidden state sequence is Markov.",src:"Week 4 · Bayesian Networks (HMM)"},
+{id:"w4-08",week:4,type:"mcq",diff:"Easy",q:"A random variable is best described as a function that:",opts:["Maps outcomes of the sample space to real scalar values","Is always discrete","Always follows a normal distribution","Cannot be used with conditional probability"],ans:[0],exp:"A random variable is a function defined on the sample space, mapping outcomes to real scalar values.",src:"Week 4 · Probability Basics"},
+{id:"w4-09",week:4,type:"mcq",diff:"Easy",q:"Two random variables X and Y are said to be independent if and only if:",opts:["P(X=x | Y=y) = 1 for all x, y","P(X=x, Y=y) = P(X=x)·P(Y=y)","P(X=x) = P(Y=y) always","X and Y have the same distribution"],ans:[1],exp:"Independence means the joint probability factors as the product of the marginals.",src:"Week 4 · Probability Basics"},
+{id:"w4-10",week:4,type:"mcq",diff:"Easy",q:"For a continuous random variable, the probability that X lies between two values a and b is obtained by:",opts:["Reading off the probability mass function directly","Integrating the probability density function (pdf) between a and b","Summing the pdf values at a and b","Taking the derivative of the pdf at those points"],ans:[1],exp:"For continuous RVs, probability over an interval is the integral of the pdf over that interval.",src:"Week 4 · Probability Basics"},
+{id:"w4-11",week:4,type:"mcq",diff:"Medium",q:"The course notes that Naïve Bayes is used successfully in many applications despite features rarely being truly conditionally independent, because:",opts:["It always computes the exact true probability regardless","It often produces the right classification decision even when the estimated probabilities are not exactly correct","Conditional independence is guaranteed for text data","It ignores the class label"],ans:[1],exp:"The course states Naïve Bayes often gives the right classification even when the probability estimates are not exactly right.",src:"Week 4 · Naïve Bayes"},
+{id:"w4-12",week:4,type:"msq",diff:"Medium",q:"For Gaussian Naïve Bayes with continuous features, the course notes that the variance of the class-conditional Gaussian can be assumed to be:",opts:["Independent of the class label Y","Independent of the feature Xi","Independent of both Y and Xi","Always exactly equal to 1"],ans:[0,1,2],exp:"The slides state variance may be assumed independent of Y, independent of Xi, or both, as simplifying assumptions.",src:"Week 4 · Gaussian Naïve Bayes"},
+{id:"w4-13",week:4,type:"numeric",diff:"Hard",q:"In the course's cancer-diagnosis example, P(cancer)=0.008 and P(positive test | cancer)=0.98. What is P(positive test | cancer) × P(cancer)? (to 4 decimal places, e.g. 0.0078)",ans:{v:0.00784,tol:0.0003},exp:"0.98 × 0.008 = 0.00784.",src:"Week 4 · Bayesian Learning Example"},
+{id:"w4-14",week:4,type:"numeric",diff:"Medium",q:"In the PlayTennis Naïve Bayes example from the course, P(Play=Yes) = 9/14. Express this as a decimal rounded to two decimal places.",ans:{v:0.64,tol:0.01},exp:"9/14 ≈ 0.64.",src:"Week 4 · Naïve Bayes Example"},
+{id:"w4-15",week:4,type:"mcq",diff:"Hard",q:"According to the result attributed to Haussler et al. (1994) discussed in the course, the expected error of the Gibbs Algorithm (relative to the Bayes Optimal Classifier) is:",opts:["Always exactly equal to the Bayes Optimal error","At most twice the expected error of the Bayes Optimal Classifier","Always lower than the Bayes Optimal error","Unbounded and unrelated to the Bayes Optimal error"],ans:[1],exp:"The slides state E[error(Gibbs)] ≤ 2·E[error(Bayes Optimal)].",src:"Week 4 · Bayes Optimal Classifier"},
+{id:"w4-16",week:4,type:"mcq",diff:"Medium",q:"Learning a Bayesian Network when the structure is known and all variables are fully observed in the training data mainly involves:",opts:["Estimating the conditional probability tables from the data","Running a gradient-ascent procedure similar to a neural network's hidden units","Performing heuristic structure search","No learning is required in this case"],ans:[0],exp:"When structure is known and all variables observed, learning reduces to estimating the conditional probabilities from data.",src:"Week 4 · Bayesian Networks"},
+ 
+/* ---------------- WEEK 5 ---------------- */
+{id:"w5-01",week:5,type:"mcq",diff:"Easy",q:"Logistic regression models the conditional probability P(y=1|x) using:",opts:["A linear function of x directly","The sigmoid/logistic function g(z) = 1/(1+e^-z) applied to βᵀx","A decision tree","The Euclidean distance to training points"],ans:[1],exp:"Logistic regression uses hβ(x) = g(βᵀx) where g is the sigmoid function.",src:"Week 5 · Logistic Regression"},
+{id:"w5-02",week:5,type:"mcq",diff:"Medium",q:"The derivative of the sigmoid function g(z) = 1/(1+e^-z) is given by:",opts:["g(z)","g(z)·(1 − g(z))","1 − g(z)²","g(z)²"],ans:[1],exp:"The course derives g'(z) = g(z)(1 − g(z)), a key sigmoid property.",src:"Week 5 · Logistic Regression"},
+{id:"w5-03",week:5,type:"mcq",diff:"Easy",q:"In logistic regression, we predict y=1 for an input x when:",opts:["hβ(x) < 0.5","hβ(x) ≥ 0.5, equivalently βᵀx ≥ 0","x contains only positive values","βᵀx is undefined"],ans:[1],exp:"We predict 1 iff hβ(x) ≥ 0.5, which is equivalent to βᵀx ≥ 0.",src:"Week 5 · Logistic Regression"},
+{id:"w5-04",week:5,type:"mcq",diff:"Medium",q:"The stochastic gradient ascent update rule for logistic regression parameters, as derived in the course, is:",opts:["βj = βj + α(y − hβ(x))xj","βj = βj − α·y·xj","βj = βj + α·hβ(x)","βj = βj − α(y − hβ(x))"],ans:[0],exp:"The course derives βj = βj + α(y(i) − hβ(x(i)))xj(i).",src:"Week 5 · Logistic Regression"},
+{id:"w5-05",week:5,type:"mcq",diff:"Easy",q:"The Support Vector Machine finds the separating hyperplane that:",opts:["Minimizes the number of support vectors","Maximizes the minimum margin between the hyperplane and the closest training points","Always passes through the origin","Minimizes the number of features used"],ans:[1],exp:"SVM finds the maximum-margin separator, maximizing the minimum distance to the closest points.",src:"Week 5 · SVM"},
+{id:"w5-06",week:5,type:"mcq",diff:"Easy",q:"Support vectors are defined as the training points that:",opts:["Have zero Lagrange multipliers (αi = 0)","Have non-zero Lagrange multipliers and determine the maximum-margin separator","Are always misclassified","Lie farthest from the decision boundary"],ans:[1],exp:"Support vectors are the points with non-zero αi, which determine the maximum-margin hyperplane.",src:"Week 5 · Support Vectors"},
+{id:"w5-07",week:5,type:"mcq",diff:"Medium",q:"In the soft-margin SVM formulation (minimize w·w + C·Σξk), the parameter C controls:",opts:["The number of support vectors directly","The trade-off between maximizing the margin and minimizing training errors (slack)","The kernel function used","The learning rate of gradient descent"],ans:[1],exp:"C controls the relative importance of maximizing the margin versus fitting the training data (controls overfitting).",src:"Week 5 · Maximum Margin with Noise"},
+{id:"w5-08",week:5,type:"mcq",diff:"Hard",q:"In the SVM dual optimization problem, the constraint Σ αiyi = 0 arises from:",opts:["Setting the derivative of the Lagrangian with respect to b to zero","Setting the derivative of the Lagrangian with respect to w to zero","The requirement that all αi be non-negative","The choice of kernel function"],ans:[0],exp:"∂Lp/∂b = 0 yields Σαiyi = 0 in the dual formulation.",src:"Week 5 · SVM Dual"},
+{id:"w5-09",week:5,type:"mcq",diff:"Easy",q:"The 'kernel trick' allows an SVM to:",opts:["Avoid computing dot products altogether","Compute dot products in a high-dimensional feature space without explicitly computing the mapping φ(x)","Reduce the number of training examples needed","Guarantee linear separability of any dataset without any transformation"],ans:[1],exp:"The kernel trick lets us compute φ(xa)·φ(xb) via K(xa,xb) without explicitly forming φ(x).",src:"Week 5 · Kernel Trick"},
+{id:"w5-10",week:5,type:"msq",diff:"Medium",q:"Which of the following are listed in the course as commonly-used kernel functions? (Select all that apply)",opts:["Linear kernel","Polynomial kernel","Gaussian (RBF) kernel","Sigmoid kernel"],ans:[0,1,2,3],exp:"The slides list linear, polynomial, Gaussian (RBF), and sigmoid kernels as commonly used kernel functions.",src:"Week 5 · Kernel Functions"},
+{id:"w5-11",week:5,type:"mcq",diff:"Medium",q:"Mercer's condition is important because it guarantees that a given kernel function:",opts:["Always produces a linear decision boundary","Corresponds to a dot product of feature vectors in some (possibly high-dimensional) space","Runs in constant time regardless of data size","Cannot be used with the SMO algorithm"],ans:[1],exp:"Mercer's condition ensures a positive semi-definite kernel can be expressed as a dot product in some feature space.",src:"Week 5 · Kernel Functions"},
+{id:"w5-12",week:5,type:"mcq",diff:"Medium",q:"The SMO (Sequential Minimal Optimization) algorithm updates the Lagrange multipliers by:",opts:["Updating all αi simultaneously in every iteration","Updating at least two αi at a time, to keep the constraint Σαiyi = 0 satisfied","Updating exactly one αi at a time with no constraints","Never updating αi, only b"],opts_note:"",ans:[1],exp:"Because Σαiyi = 0 must hold, SMO updates at least two αi together at each step.",src:"Week 5 · SMO Algorithm"},
+{id:"w5-13",week:5,type:"mcq",diff:"Easy",q:"For a multi-class classification problem with N classes using the one-vs-rest SVM approach described in the course, how many SVMs need to be trained?",opts:["1","N","N²","N−1"],ans:[1],exp:"The course describes training N SVMs, one per class versus the rest.",src:"Week 5 · Multi-class Classification"},
+{id:"w5-14",week:5,type:"mcq",diff:"Medium",q:"The functional margin of a point (xi, yi) with respect to a decision boundary (w, b) is defined as:",opts:["yi (wᵀxi + b)","wᵀxi only","|xi| / |w|","The Euclidean distance from xi to the origin"],ans:[0],exp:"Functional margin γi = yi(wᵀxi + b), as defined in the course.",src:"Week 5 · Functional Margin"},
+{id:"w5-15",week:5,type:"mcq",diff:"Medium",q:"To convert the functional margin into the geometric margin, the course shows that we must normalize by:",opts:["The number of training examples","‖w‖, the norm of the weight vector","The bias term b","The number of support vectors"],ans:[1],exp:"Geometric margin = functional margin / ‖w‖.",src:"Week 5 · Geometric Margin"},
+{id:"w5-16",week:5,type:"numeric",diff:"Easy",q:"For the kernel K(xi,xj) = (1 + xi·xj)^p worked out in the course for 2-D vectors, what integer value of p was used in the example?",ans:{v:2,tol:0},exp:"The course's kernel example uses K(xi,xj) = (1 + xi·xj)², i.e., p = 2.",src:"Week 5 · Kernel Example"},
+ 
+/* ---------------- WEEK 6 ---------------- */
+{id:"w6-01",week:6,type:"mcq",diff:"Easy",q:"A basic perceptron computes its output by applying a threshold function to:",opts:["The product of all inputs","The weighted sum of its inputs (including a bias term)","The maximum of its inputs","A random number"],ans:[1],exp:"A perceptron computes y = Σwi·xi and applies a threshold function to it.",src:"Week 6 · Perceptrons"},
+{id:"w6-02",week:6,type:"mcq",diff:"Easy",q:"The perceptron training rule updates weights using:",opts:["Δwi = η(y − ŷ)xi","Δwi = η·y·ŷ","Δwi = −η·xi","Δwi = η/xi"],ans:[0],exp:"The perceptron training rule is Δwi = η(y − ŷ)xi.",src:"Week 6 · Perceptron Training Rule"},
+{id:"w6-03",week:6,type:"mcq",diff:"Medium",q:"The perceptron training rule is guaranteed to converge to a hypothesis that classifies all training data correctly only when:",opts:["The learning rate η is very large","The training data is linearly separable","There are more than 2 output classes","The network has at least two hidden layers"],ans:[1],exp:"Convergence of the perceptron rule is guaranteed only for linearly separable data with a suitably small η.",src:"Week 6 · Perceptron Training Rule"},
+{id:"w6-04",week:6,type:"mcq",diff:"Easy",q:"The 'Neuron Model: Logistic Unit' described in the course uses which activation function?",opts:["Step function","Sigmoid function, φ(z) = 1/(1+e^-z)","Identity function","Softmax over all neurons"],ans:[1],exp:"The Logistic Unit uses the sigmoid activation φ(z) = 1/(1+e^-z).",src:"Week 6 · Neuron Models"},
+{id:"w6-05",week:6,type:"mcq",diff:"Medium",q:"Backpropagation computes the gradient of the error with respect to each weight by:",opts:["Randomly perturbing weights and observing the effect","Propagating the error backward from the output layer to hidden layers using the chain rule","Solving a closed-form matrix equation for all weights","Ignoring hidden layer weights entirely"],ans:[1],exp:"Backpropagation uses the chain rule to propagate error derivatives backward through the network.",src:"Week 6 · Backpropagation"},
+{id:"w6-06",week:6,type:"mcq",diff:"Medium",q:"According to the course, every Boolean function can be represented by a neural network with:",opts:["No hidden layers at all","A single hidden layer","At least five hidden layers","Only linear activation functions"],ans:[1],exp:"The course states every Boolean function can be represented with a single hidden layer.",src:"Week 6 · Multi-layer Networks"},
+{id:"w6-07",week:6,type:"mcq",diff:"Easy",q:"The XOR function cannot be represented by a single-layer perceptron because XOR is:",opts:["Not linearly separable","A continuous function","Undefined for boolean inputs","Only solvable using regression"],ans:[0],exp:"XOR is not linearly separable, so a single-layer perceptron cannot represent it; a hidden layer is required.",src:"Week 6 · Multi-layer Networks"},
+{id:"w6-08",week:6,type:"msq",diff:"Medium",q:"Which of the following are mentioned in the course as difficulties in supervised training of deep (many-layer) networks? (Select all that apply)",opts:["Diffusion of gradient in early layers","Often not enough labeled data available","More local minima problems than shallow networks","Too few weights to represent the function"],ans:[0,1,2],exp:"The slides list diffusion of gradient, insufficient labeled data, and more local minima as difficulties in training deep networks.",src:"Week 6 · Deep Neural Networks"},
+{id:"w6-09",week:6,type:"mcq",diff:"Easy",q:"In an autoencoder, the target output values y(i) are set equal to:",opts:["Random noise","The input values x(i) themselves","The class labels","Zero for all inputs"],ans:[1],exp:"An autoencoder is trained to output the input itself, i.e., y(i) = x(i).",src:"Week 6 · Autoencoders"},
+{id:"w6-10",week:6,type:"mcq",diff:"Easy",q:"The ReLU (Rectified Linear Unit) activation function is defined as:",opts:["relu(x) = 1/(1+e^-x)","relu(x) = max(0, x)","relu(x) = tanh(x)","relu(x) = x²"],ans:[1],exp:"ReLU(x) = max(0, x), as given in the Activation Functions slide.",src:"Week 6 · Deep Neural Networks"},
+{id:"w6-11",week:6,type:"mcq",diff:"Medium",q:"According to the course, ReLU is a preferred activation function mainly because it:",opts:["Slows down training but improves accuracy","Simplifies backpropagation, speeds up learning, and encourages sparse features","Is bounded strictly between 0 and 1","Cannot be used in convolutional networks"],ans:[1],exp:"The slides note ReLU simplifies backprop, makes learning faster, and makes features sparse.",src:"Week 6 · Deep Neural Networks"},
+{id:"w6-12",week:6,type:"mcq",diff:"Medium",q:"In a convolutional layer, neurons take input from:",opts:["The entire previous layer with independently-learned weights per neuron","A small rectangular section of the previous layer, sharing the same weights across the layer","Only the single previous neuron directly above them","Randomly selected, unrelated inputs each iteration"],ans:[1],exp:"CNN neurons connect to a rectangular section of the previous layer, with tied (shared) weights.",src:"Week 6 · Convolutional Neural Networks"},
+{id:"w6-13",week:6,type:"mcq",diff:"Easy",q:"A pooling layer in a CNN typically performs which operation on a small rectangular block of the convolutional layer's output?",opts:["Subsampling, e.g., taking the max or average value","Multiplying by a learned weight matrix","Backpropagating the error","Adding a bias term only"],ans:[0],exp:"Pooling subsamples small blocks, e.g. via max or average, to produce a single output per block.",src:"Week 6 · Convolutional Neural Networks"},
+{id:"w6-14",week:6,type:"mcq",diff:"Medium",q:"Adding a momentum term α to the backpropagation weight update mainly helps to:",opts:["Guarantee a global minimum is always found","Help the algorithm avoid getting stuck as easily in local minima and speed convergence","Eliminate the need for a learning rate","Remove the need for hidden layers"],ans:[1],exp:"Momentum helps escape shallow local minima and speeds convergence, as noted in the Backpropagation slide.",src:"Week 6 · Backpropagation"},
+{id:"w6-15",week:6,type:"mcq",diff:"Medium",q:"For a linear neuron, the error surface with respect to the weights (for squared error) forms:",opts:["A flat plane","A quadratic bowl","A random, non-smooth surface","A step function"],ans:[1],exp:"For a linear neuron, the error surface is a quadratic bowl, with elliptical horizontal cross-sections.",src:"Week 6 · Linear Neurons"},
+{id:"w6-16",week:6,type:"numeric",diff:"Easy",q:"In the Boolean OR perceptron example from the course (weights w1=1, w2=1), what bias weight w0 is used to correctly implement OR?",ans:{v:-0.5,tol:0.01},exp:"The slides use w0 = −0.5 for the Boolean OR perceptron example.",src:"Week 6 · Backpropagation Examples"},
+ 
+/* ---------------- WEEK 7 ---------------- */
+{id:"w7-01",week:7,type:"mcq",diff:"Easy",q:"In the PAC (Probably Approximately Correct) learning framework, we require that with probability at least (1−δ), the learner outputs a hypothesis with error at most:",opts:["δ","ε","1−ε","0"],ans:[1],exp:"PAC learning requires Pr[error(h) ≤ ε] ≥ 1−δ.",src:"Week 7 · PAC Learning"},
+{id:"w7-02",week:7,type:"mcq",diff:"Medium",q:"The VC dimension VC(H) of a hypothesis space H is defined as:",opts:["The total number of hypotheses in H","The size of the largest finite subset of the instance space that can be shattered by H","The number of training examples used","The number of features in the input space"],ans:[1],exp:"VC(H) is the size of the largest finite instance subset that can be shattered by H.",src:"Week 7 · VC Dimension"},
+{id:"w7-03",week:7,type:"mcq",diff:"Medium",q:"According to the course, the VC dimension of the set of axis-parallel rectangles in the real plane is:",opts:["2","3","4","Infinite"],ans:[2],exp:"The slides show that some 4 points can be shattered by axis-parallel rectangles, but no 5 points can, so VC(H) = 4.",src:"Week 7 · VC Dimension Example"},
+{id:"w7-04",week:7,type:"mcq",diff:"Easy",q:"A hypothesis h is called 'approximately correct' with respect to target concept c and distribution D if:",opts:["errorD(h) ≤ ε","errorD(h) = 0 exactly","errorD(h) ≥ ε","h agrees with only one training example"],ans:[0],exp:"h is approximately correct if its true error is at most ε.",src:"Week 7 · PAC Learning"},
+{id:"w7-05",week:7,type:"mcq",diff:"Easy",q:"The Find-S algorithm begins by initializing the hypothesis h to:",opts:["The most general hypothesis in H","The most specific hypothesis in H","A randomly chosen hypothesis","The hypothesis with lowest VC dimension"],ans:[1],exp:"Find-S starts from the most specific hypothesis and generalizes it as needed to fit positive examples.",src:"Week 7 · Concept Learning"},
+{id:"w7-06",week:7,type:"numeric",diff:"Hard",q:"Using the sample-complexity formula m ≥ (1/ε)(n·ln3 + ln(1/δ)) for learning conjunctions of n Boolean literals, the course states that for δ=ε=0.05 and n=10, approximately how many examples are sufficient? (nearest value given in the slides)",ans:{v:280,tol:5},exp:"The slides give this concrete example as ≈280 examples.",src:"Week 7 · Sample Complexity"},
+{id:"w7-07",week:7,type:"mcq",diff:"Medium",q:"The sample complexity bound for PAC learning in the realizable (consistent) case, m ≥ (1/ε)(ln|H| + ln(1/δ)), shows that the required number of examples grows:",opts:["Linearly with |H| and exponentially with 1/ε","Logarithmically with |H| and inversely (linearly) with ε","Independently of both |H| and ε","Only with the number of features, not |H|"],ans:[1],exp:"The bound is logarithmic in |H| and inversely linear in ε, as stated in the course.",src:"Week 7 · Sample Complexity"},
+{id:"w7-08",week:7,type:"mcq",diff:"Medium",q:"Bagging is described in the course as working best with base learners that:",opts:["Have low variance and are already very stable","Have high variance / are unstable, such as decision trees or ANNs","Cannot be trained on bootstrap samples","Always agree with each other"],ans:[1],exp:"Bagging is desired for high-variance/unstable learners like decision trees and ANNs; k-NN is called stable, less suited to bagging.",src:"Week 7 · Bagging"},
+{id:"w7-09",week:7,type:"mcq",diff:"Easy",q:"In AdaBoost, training examples that are misclassified in one round of boosting:",opts:["Are removed from the training set","Get their weights increased for the next round","Get their weights decreased for the next round","Are duplicated exactly once"],ans:[1],exp:"AdaBoost increases the weight of misclassified examples so subsequent weak learners focus on them.",src:"Week 7 · Boosting/AdaBoost"},
+{id:"w7-10",week:7,type:"mcq",diff:"Easy",q:"A 'weak learner' in the context of boosting is defined in the course as one whose accuracy is:",opts:["Always 100%","Better than random guessing (P(correct) > 50%), but not necessarily much better","Always exactly 50%","Worse than random guessing"],ans:[1],exp:"A weak learner has accuracy just better than 50% (random guessing), not necessarily much better.",src:"Week 7 · Boosting"},
+{id:"w7-11",week:7,type:"mcq",diff:"Medium",q:"Ensemble methods work well, according to the course, primarily when the individual classifiers:",opts:["Always agree with each other on every example","Disagree / make errors that are largely independent of one another","Are all trained on identical data with identical parameters","Have very high individual error rates"],ans:[1],exp:"Ensembles work well only if individual classifiers disagree and make largely independent errors.",src:"Week 7 · Ensemble Learning"},
+{id:"w7-12",week:7,type:"msq",diff:"Medium",q:"Which of the following are described in the course as approaches to create diverse base learners for an ensemble? (Select all that apply)",opts:["Injecting randomness (e.g., initial weights, different splits)","Using different training sets (e.g., bagging, boosting)","Forcing differences via different objective functions","Using an identical training procedure for every member"],ans:[0,1,2],exp:"The slides list injecting randomness, using different training sets, and forcing differences via objective functions as ensemble creation approaches.",src:"Week 7 · Ensemble Learning"},
+{id:"w7-13",week:7,type:"mcq",diff:"Hard",q:"The Bayes Optimal Classifier, as discussed in the course, is best described as:",opts:["A single best hypothesis chosen from H","An ensemble of all hypotheses in the hypothesis space, weighted by their posterior probability","The hypothesis with the smallest VC dimension","Equivalent to a single decision tree"],ans:[1],exp:"The course describes the Bayes Optimal Classifier as an ensemble of all hypotheses, weighted by likelihood and prior.",src:"Week 7 · Ensemble Learning"},
+{id:"w7-14",week:7,type:"mcq",diff:"Hard",q:"According to the course, if the errors of L independent base classifiers are averaged, the variance of the ensemble's output is reduced (relative to a single model) by a factor of approximately:",opts:["L","1/L","L²","No reduction occurs"],ans:[1],exp:"For independent errors, Var(ensemble average) = Var(single model)/L.",src:"Week 7 · Ensemble Learning"},
+{id:"w7-15",week:7,type:"mcq",diff:"Medium",q:"According to the course, k-NN is generally considered a:",opts:["High-variance, unstable learner well-suited for bagging","Stable learner, making it less suited to benefit from bagging","Learner that cannot be used at all in ensembles","Boosting algorithm"],ans:[1],exp:"The slides explicitly note that K-NN is stable, unlike decision trees and ANNs which are unstable and thus better for bagging.",src:"Week 7 · Bagging"},
+{id:"w7-16",week:7,type:"numeric",diff:"Hard",q:"In the sample-complexity lower bound formula involving the VC dimension, max{(1/ε)log2(1/δ), (VC(C) − 1)/32}, what is the denominator constant shown in the second term?",ans:{v:32,tol:0},exp:"The slides give the lower bound term as (VC(C)−1)/32.",src:"Week 7 · Sample Complexity (VC bounds)"},
+ 
+/* ---------------- WEEK 8 ---------------- */
+{id:"w8-01",week:8,type:"mcq",diff:"Easy",q:"K-means is an example of which major clustering approach?",opts:["Hierarchical clustering","Partitioning clustering","Density-based clustering","Graph-theoretic clustering"],ans:[1],exp:"K-means is a partitioning heuristic method (MacQueen, 1967) as described in the course.",src:"Week 8 · Clustering Approaches"},
+{id:"w8-02",week:8,type:"mcq",diff:"Medium",q:"Which of the following is NOT listed in the course as a valid stopping/convergence criterion for K-means?",opts:["No re-assignment of data points to different clusters","No (or minimal) change of centroids","Minimum decrease in the sum of squared error (SSE)","A fixed number of clusters k is reached"],ans:[3],exp:"K is fixed from the start; the listed stopping criteria are no reassignment, no centroid change, and minimum SSE decrease.",src:"Week 8 · K-means Algorithm"},
+{id:"w8-03",week:8,type:"mcq",diff:"Medium",q:"Single-link (agglomerative) clustering defines the distance between two clusters as the:",opts:["Average distance between all pairs of points across the clusters","Minimum distance (most similar pair) between any two points in the different clusters","Maximum distance between any two points in the different clusters","Distance between the cluster centroids only"],ans:[1],exp:"Single-link distance is based on the closest (most similar) pair of points between the two clusters.",src:"Week 8 · Hierarchical Clustering"},
+{id:"w8-04",week:8,type:"mcq",diff:"Medium",q:"Complete-link clustering defines the distance between two clusters based on:",opts:["The nearest pair of points between the clusters","The two most distant (furthest) points between the clusters","The centroid distance only","A weighted average of all distances"],ans:[1],exp:"Complete-link uses the distance between the two furthest points across the clusters.",src:"Week 8 · Hierarchical Clustering"},
+{id:"w8-05",week:8,type:"mcq",diff:"Medium",q:"Which hierarchical clustering method is noted in the course as prone to producing long, thin 'straggly' clusters due to a chaining effect?",opts:["Complete-link clustering","Average-link clustering","Single-link clustering","K-means clustering"],ans:[2],exp:"Single-link clustering can result in straggly, chained clusters, as noted in the course.",src:"Week 8 · Hierarchical Clustering"},
+{id:"w8-06",week:8,type:"mcq",diff:"Hard",q:"According to the course, the time complexity of one full reassignment step of K-means (computing distances from m points to k centroids, each in n dimensions) is:",opts:["O(n)","O(km)","O(kmn)","O(m²)"],ans:[2],exp:"Reassigning clusters requires O(km) distance computations, each O(n), giving O(kmn).",src:"Week 8 · K-means Time Complexity"},
+{id:"w8-07",week:8,type:"mcq",diff:"Easy",q:"A key disadvantage of K-means mentioned in the course is that it:",opts:["Automatically determines the optimal number of clusters","Requires the number of clusters k to be specified in advance","Cannot be applied to numerical data","Always finds the global optimum"],ans:[1],exp:"K-means requires the number of clusters k to be specified beforehand, and only finds local optima.",src:"Week 8 · K-means Disadvantages"},
+{id:"w8-08",week:8,type:"msq",diff:"Easy",q:"Which of the following are listed in the course as major clustering approaches? (Select all that apply)",opts:["Partitioning","Hierarchical","Model-based","Regression-based"],ans:[0,1,2],exp:"The course lists Partitioning, Hierarchical, Model-based, Density-based, and Graph-theoretic clustering as major approaches.",src:"Week 8 · Clustering Approaches"},
+{id:"w8-09",week:8,type:"mcq",diff:"Medium",q:"In the EM (Expectation-Maximization) algorithm for clustering, the Expectation step:",opts:["Updates the model parameters to maximize likelihood","Probabilistically assigns points to clusters based on current parameters","Initializes the cluster centers randomly","Terminates the algorithm"],ans:[1],exp:"The E-step probabilistically assigns points to clusters; the M-step then re-estimates parameters.",src:"Week 8 · Model-Based Clustering (EM)"},
+{id:"w8-10",week:8,type:"mcq",diff:"Medium",q:"The Davies-Bouldin index, as discussed in the course, is used for:",opts:["External evaluation using known class labels","Internal evaluation of clustering quality using intra/inter-cluster distances","Measuring classifier accuracy in supervised learning","Selecting kernel functions for SVMs"],ans:[1],exp:"Davies-Bouldin index is an internal evaluation measure of clustering quality.",src:"Week 8 · Clustering Quality"},
+{id:"w8-11",week:8,type:"mcq",diff:"Medium",q:"The Rand Index, RI = (TP+TN)/(TP+FP+FN+TN), is used for:",opts:["Internal evaluation of clustering with no ground truth","External evaluation of clustering against known class labels","Choosing the number of clusters k automatically","Computing distances between points"],ans:[1],exp:"Rand Index is an external evaluation metric that compares clustering to known class labels/benchmarks.",src:"Week 8 · Clustering Quality"},
+{id:"w8-12",week:8,type:"mcq",diff:"Medium",q:"The Jaccard Index J(A,B) = |A∩B| / |A∪B| can be expressed in classification terms (TP, FP, FN) as:",opts:["TP / (TP+FP+FN)","TP / (TP+TN)","(TP+TN) / (TP+FP+FN+TN)","FP / (TP+FP)"],ans:[0],exp:"J(A,B) = TP/(TP+FP+FN), as given in the course.",src:"Week 8 · Clustering Quality"},
+{id:"w8-13",week:8,type:"mcq",diff:"Easy",q:"Agglomerative hierarchical clustering starts by treating:",opts:["All data points as one single cluster and splitting","Each data point as its own individual cluster and merging","Only two clusters, chosen randomly","No data points at all"],ans:[1],exp:"Agglomerative (bottom-up) clustering starts with singleton clusters and merges the closest pairs.",src:"Week 8 · Hierarchical Clustering"},
+{id:"w8-14",week:8,type:"mcq",diff:"Easy",q:"Divisive hierarchical clustering starts by treating:",opts:["All data points as one single cluster, then recursively splitting","Each point as its own cluster, then merging","A predefined number of random clusters","Only the two most similar points as a cluster"],ans:[0],exp:"Divisive (top-down) clustering starts with all points in one cluster and recursively splits.",src:"Week 8 · Hierarchical Clustering"},
+{id:"w8-15",week:8,type:"numeric",diff:"Hard",q:"Using the K-means overall time-complexity O(t·k·m·n) with t=10 iterations, k=3 clusters, m=100 data points, and n=5 dimensions, what is the value of t·k·m·n?",ans:{v:15000,tol:0},exp:"10 × 3 × 100 × 5 = 15,000.",src:"Week 8 · K-means Time Complexity"},
+{id:"w8-16",week:8,type:"mcq",diff:"Medium",q:"Unlike Minkowski-family distances (e.g., Euclidean, Manhattan), which are scale-dependent, the course notes that which of the following measures is scale-invariant?",opts:["Cosine distance only","Correlation coefficients (e.g., Pearson correlation)","Squared Euclidean distance","Manhattan distance"],ans:[1],exp:"The course lists correlation coefficients as scale-invariant, unlike the scale-dependent Minkowski family.",src:"Week 8 · (Dis)similarity Measures"}
+];
+ 
+/* =========================================================================
+   STORAGE HELPERS
+   ========================================================================= */
+const LS = {
+  STATS:"nptel_qstats_v1", HISTORY:"nptel_history_v1", SETTINGS:"nptel_settings_v1",
+  CURRENT:"nptel_current_v1", RECENT:"nptel_recent_v1", THEME:"nptel_theme_v1"
+};
+const FULL_MOCK_TIMER_MINUTES = 180;
+const FULL_MOCK_TIMER_SECONDS = 3 * 60 * 60;
+const FULL_MOCK_TIMER_LABEL = "3 hours (03:00:00)";
+function lsGet(key, fallback){
+  try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+  catch(e){ return fallback; }
+}
+function lsSet(key, val){
+  try{ localStorage.setItem(key, JSON.stringify(val)); return true; }
+  catch(e){ console.error("Storage error", e); return false; }
+}
+function getStats(){ return lsGet(LS.STATS, {}); }
+function saveStats(s){ lsSet(LS.STATS, s); }
+function getHistory(){ return lsGet(LS.HISTORY, []); }
+function saveHistory(h){ lsSet(LS.HISTORY, h); }
+function getSettings(){
+  const settings = lsGet(LS.SETTINGS, {
+    numQuestions:40, marksPerQ:2.5, timerMinutes:FULL_MOCK_TIMER_MINUTES, timerEnabled:true, immediateFeedback:true,
+    distMcq:60, distMsq:25, distNum:15, difficulty:"Mixed", weeks:[1,2,3,4,5,6,7,8]
+  });
+  // Upgrade saved preferences from earlier versions and keep full mocks fixed at three hours.
+  if(settings.timerMinutes !== FULL_MOCK_TIMER_MINUTES){
+    settings.timerMinutes = FULL_MOCK_TIMER_MINUTES;
+    lsSet(LS.SETTINGS, settings);
+  }
+  return settings;
+}
+function saveSettings(s){ lsSet(LS.SETTINGS, s); }
+function getCurrent(){ return lsGet(LS.CURRENT, null); }
+function saveCurrent(c){ lsSet(LS.CURRENT, c); }
+function clearCurrent(){ try{ localStorage.removeItem(LS.CURRENT); }catch(e){} }
+function getRecent(){ return lsGet(LS.RECENT, []); }
+function updateRecent(qids){
+  let r = getRecent();
+  r = qids.concat(r);
+  if(r.length>160) r = r.slice(0,160);
+  lsSet(LS.RECENT, r);
+}
+ 
+/* =========================================================================
+   UTILITIES
+   ========================================================================= */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+function byId(qid){ return QUESTIONS.find(q=>q.id===qid); }
+function fmt1(n){ return (Math.round(n*10)/10).toString(); }
+function fmtPct(n){ return (Math.round(n*10)/10)+"%"; }
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+  });
+}
+function fmtTime(sec){
+  sec = Math.max(0, Math.round(sec));
+  const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
+  return (h<10?"0":"")+h+":"+(m<10?"0":"")+m+":"+(s<10?"0":"")+s;
+}
+function fmtTimeLong(sec){
+  sec = Math.max(0, Math.round(sec));
+  const m = Math.floor(sec/60), s = sec%60;
+  return m+" min "+s+" sec";
+}
+function nowISO(){ return new Date().toISOString(); }
+function fmtDate(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString(undefined,{day:"2-digit",month:"short",year:"numeric"})+" · "+d.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});
+}
+ 
+/* =========================================================================
+   TEST GENERATION ENGINE
+   ========================================================================= */
+function computeWeekCounts(total, weeks){
+  const n = weeks.length;
+  let base = Math.floor(total/n);
+  let rem = total - base*n;
+  let counts = new Array(n).fill(base);
+  const order = shuffle([...Array(n).keys()]);
+  for(let i=0;i<rem;i++) counts[order[i%order.length]]++;
+  for(let t=0;t<n;t++){
+    if(Math.random()<0.4){
+      const a = Math.floor(Math.random()*n), b = Math.floor(Math.random()*n);
+      if(a!==b && counts[a]>1){ counts[a]--; counts[b]++; }
+    }
+  }
+  return counts;
+}
+ 
+function makeInstance(q){
+  let options=null, correctIdx=null, numAns=null;
+  if(q.type==="mcq" || q.type==="msq"){
+    const order = shuffle(q.opts.map((_,i)=>i));
+    options = order.map(i=>q.opts[i]);
+    correctIdx = [];
+    order.forEach((origIdx,newIdx)=>{ if(q.ans.includes(origIdx)) correctIdx.push(newIdx); });
+  } else {
+    numAns = q.ans;
+  }
+  return {qid:q.id, week:q.week, type:q.type, diff:q.diff, question:q.q, src:q.src, exp:q.exp, options, correctIdx, numAns};
+}
+ 
+function buildTest(opts){
+  // opts: {total, weeks, difficulty, distMcq, distMsq, distNum, typeFilter, sourcePool}
+  let basePool = opts.sourcePool || QUESTIONS.filter(q=>
+    opts.weeks.includes(q.week) && (opts.difficulty==="Mixed" || q.diff===opts.difficulty)
+  );
+  if(opts.typeFilter) basePool = basePool.filter(q=>q.type===opts.typeFilter);
+  if(basePool.length===0) return [];
+  const total = Math.min(opts.total, basePool.length);
+  const recent = getRecent();
+ 
+  let typeSlots;
+  if(opts.typeFilter){
+    typeSlots = new Array(total).fill(opts.typeFilter);
+  } else {
+    let nMcq = Math.round(total*opts.distMcq/100);
+    let nMsq = Math.round(total*opts.distMsq/100);
+    let nNum = total - nMcq - nMsq;
+    if(nNum<0){ nNum=0; nMsq = Math.max(0,total-nMcq); }
+    typeSlots = shuffle([...Array(nMcq).fill("mcq"), ...Array(nMsq).fill("msq"), ...Array(nNum).fill("numeric")]);
+    while(typeSlots.length<total) typeSlots.push("mcq");
+    typeSlots = typeSlots.slice(0,total);
+  }
+ 
+  const weeksPresent = [...new Set(basePool.map(q=>q.week))].sort((a,b)=>a-b);
+  const weekCountsArr = computeWeekCounts(total, weeksPresent);
+  let weekSlots = [];
+  weeksPresent.forEach((w,i)=>{ for(let k=0;k<weekCountsArr[i];k++) weekSlots.push(w); });
+  weekSlots = shuffle(weekSlots);
+  while(weekSlots.length<total) weekSlots.push(weeksPresent[Math.floor(Math.random()*weeksPresent.length)]);
+  weekSlots = weekSlots.slice(0,total);
+ 
+  const used = new Set();
+  const picks = [];
+  for(let i=0;i<total;i++){
+    const wantWeek = weekSlots[i], wantType = typeSlots[i];
+    let cands = basePool.filter(q=>!used.has(q.id) && q.week===wantWeek && q.type===wantType);
+    if(cands.length===0) cands = basePool.filter(q=>!used.has(q.id) && q.week===wantWeek);
+    if(cands.length===0) cands = basePool.filter(q=>!used.has(q.id) && q.type===wantType);
+    if(cands.length===0) cands = basePool.filter(q=>!used.has(q.id));
+    if(cands.length===0) break;
+    let preferred = cands.filter(q=>!recent.includes(q.id));
+    let pool2 = preferred.length ? preferred : cands;
+    const choice = pool2[Math.floor(Math.random()*pool2.length)];
+    used.add(choice.id);
+    picks.push(choice);
+  }
+  const finalOrder = shuffle(picks);
+  const instances = finalOrder.map(makeInstance);
+  updateRecent(instances.map(i=>i.qid));
+  return instances;
+}
+ 
+function startTest(mode, params){
+  params = params || {};
+  const settings = getSettings();
+  let instances = [];
+  let marksPerQ = settings.marksPerQ;
+  let timerEnabled = settings.timerEnabled;
+ 
+  if(mode==="full"){
+    instances = buildTest({total:settings.numQuestions, weeks:settings.weeks, difficulty:settings.difficulty,
+      distMcq:settings.distMcq, distMsq:settings.distMsq, distNum:settings.distNum});
+  } else if(mode==="quick"){
+    instances = buildTest({total:10, weeks:settings.weeks, difficulty:settings.difficulty,
+      distMcq:settings.distMcq, distMsq:settings.distMsq, distNum:settings.distNum});
+    timerEnabled = false;
+  } else if(mode==="week"){
+    instances = buildTest({total:params.count||15, weeks:params.weeks, difficulty:settings.difficulty,
+      distMcq:settings.distMcq, distMsq:settings.distMsq, distNum:settings.distNum});
+    timerEnabled = false;
+  } else if(mode==="numeric"){
+    instances = buildTest({total:params.count||12, weeks:settings.weeks, difficulty:"Mixed", typeFilter:"numeric",
+      distMcq:0, distMsq:0, distNum:100});
+    timerEnabled = false;
+  } else if(mode==="msq"){
+    instances = buildTest({total:params.count||12, weeks:settings.weeks, difficulty:"Mixed", typeFilter:"msq",
+      distMcq:0, distMsq:100, distNum:0});
+    timerEnabled = false;
+  } else if(mode==="incorrect"){
+    const stats = getStats();
+    const badIds = Object.keys(stats).filter(id=>stats[id].lastCorrect===false);
+    const sourcePool = QUESTIONS.filter(q=>badIds.includes(q.id));
+    if(sourcePool.length===0) return null;
+    instances = buildTest({total:sourcePool.length, weeks:settings.weeks, difficulty:"Mixed",
+      distMcq:60, distMsq:25, distNum:15, sourcePool});
+    timerEnabled = false;
+  }
+  if(instances.length===0) return null;
+ 
+  const test = {
+    id:"test_"+Date.now(), mode:mode, startTime:Date.now(), marksPerQ:marksPerQ,
+    timerEnabled: timerEnabled, timerTotalSec: FULL_MOCK_TIMER_SECONDS, timerRemaining: FULL_MOCK_TIMER_SECONDS,
+    instances: instances, currentIndex:0,
+    answers: instances.map(()=>({submitted:false,userAnswer:null,isCorrect:null,marks:0}))
+  };
+  saveCurrent(test);
+  return test;
+}
+ 
+function submitAnswer(userAnswer){
+  const test = getCurrent();
+  if(!test) return;
+  const idx = test.currentIndex;
+  const ans = test.answers[idx];
+  if(ans.submitted) return;
+  const inst = test.instances[idx];
+  let isCorrect = false;
+  if(inst.type==="mcq"){
+    isCorrect = inst.correctIdx.length===1 && userAnswer===inst.correctIdx[0];
+  } else if(inst.type==="msq"){
+    const u = (userAnswer||[]).slice().sort();
+    const c = inst.correctIdx.slice().sort();
+    isCorrect = u.length===c.length && u.every((v,i)=>v===c[i]);
+  } else if(inst.type==="numeric"){
+    const v = parseFloat(userAnswer);
+    isCorrect = !isNaN(v) && Math.abs(v - inst.numAns.v) <= (inst.numAns.tol||0.01);
+  }
+  ans.submitted = true;
+  ans.userAnswer = userAnswer;
+  ans.isCorrect = isCorrect;
+  ans.marks = isCorrect ? test.marksPerQ : 0;
+ 
+  const stats = getStats();
+  if(!stats[inst.qid]) stats[inst.qid] = {attempted:0,correct:0,incorrect:0,lastCorrect:null};
+  stats[inst.qid].attempted++;
+  if(isCorrect) stats[inst.qid].correct++; else stats[inst.qid].incorrect++;
+  stats[inst.qid].lastCorrect = isCorrect;
+  saveStats(stats);
+  saveCurrent(test);
+}
+ 
+function finishTest(){
+  const test = getCurrent();
+  if(!test) return null;
+  const total = test.instances.length;
+  let correct=0, incorrect=0, score=0;
+  const weekBreakdown = {}, typeBreakdown = {mcq:{correct:0,total:0},msq:{correct:0,total:0},numeric:{correct:0,total:0}};
+  const details = test.instances.map((inst,i)=>{
+    const a = test.answers[i];
+    const ok = a.submitted ? a.isCorrect : false;
+    if(a.submitted && ok) correct++; else incorrect++;
+    score += a.marks||0;
+    if(!weekBreakdown[inst.week]) weekBreakdown[inst.week] = {correct:0,total:0};
+    weekBreakdown[inst.week].total++;
+    if(a.submitted && ok) weekBreakdown[inst.week].correct++;
+    typeBreakdown[inst.type].total++;
+    if(a.submitted && ok) typeBreakdown[inst.type].correct++;
+    return {qid:inst.qid, week:inst.week, type:inst.type, diff:inst.diff, question:inst.question,
+      options:inst.options, correctIdx:inst.correctIdx, numAns:inst.numAns, src:inst.src, exp:inst.exp,
+      userAnswer:a.userAnswer, isCorrect:a.submitted?a.isCorrect:false, submitted:a.submitted, marks:a.marks||0};
+  });
+  const timeSec = test.timerEnabled ? (test.timerTotalSec - test.timerRemaining) : Math.round((Date.now()-test.startTime)/1000);
+  const record = {
+    id: test.id, date: nowISO(), mode: test.mode, total: total, correct: correct, incorrect: incorrect,
+    score: Math.round(score*100)/100, maxScore: Math.round(total*test.marksPerQ*100)/100,
+    accuracy: total? Math.round((correct/total)*1000)/10 : 0, timeSec: timeSec,
+    weekBreakdown: weekBreakdown, typeBreakdown: typeBreakdown, details: details
+  };
+  const hist = getHistory();
+  hist.unshift(record);
+  if(hist.length>300) hist.length = 300;
+  saveHistory(hist);
+  clearCurrent();
+  return record;
+}
+ 
+/* =========================================================================
+   APP STATE & ROUTER
+   ========================================================================= */
+let VIEW = "dashboard";
+let VIEW_PARAM = null;
+let timerHandle = null;
+ 
+const NAV_ITEMS = [
+  {id:"dashboard", label:"Dashboard", icon:"&#9679;"},
+  {id:"mocktest", label:"Mock Test", icon:"&#9998;"},
+  {id:"practice", label:"Quick Practice", icon:"&#9889;"},
+  {id:"bank", label:"Question Bank", icon:"&#9776;"},
+  {id:"progress", label:"Progress", icon:"&#8593;"},
+  {id:"history", label:"History", icon:"&#128337;"},
+  {id:"settings", label:"Settings", icon:"&#9881;"}
+];
+ 
+function navigate(view, param){
+  VIEW = view; VIEW_PARAM = param||null;
+  closeSidebar();
+  render();
+  window.scrollTo(0,0);
+}
+function openSidebar(){ document.getElementById("sidebar").classList.add("open"); document.getElementById("overlay").classList.add("show"); }
+function closeSidebar(){ document.getElementById("sidebar").classList.remove("open"); document.getElementById("overlay").classList.remove("show"); }
+ 
+function setTheme(mode){
+  if(mode==="auto"){ document.documentElement.removeAttribute("data-theme"); }
+  else { document.documentElement.setAttribute("data-theme", mode); }
+  lsSet(LS.THEME, mode);
+  updateThemeButtons();
+}
+function updateThemeButtons(){
+  const t = lsGet(LS.THEME,"auto");
+  ["light","dark","auto"].forEach(m=>{
+    document.getElementById("theme-"+m).classList.toggle("active", t===m);
+  });
+}
+ 
+function renderNav(){
+  const el = document.getElementById("nav-list");
+  el.innerHTML = NAV_ITEMS.map(function(item){
+    return '<button class="nav-item '+(VIEW===item.id?'active':'')+'" onclick="navigate(\''+item.id+'\')">'+
+      '<span class="nav-icon">'+item.icon+'</span>'+item.label+'</button>';
+  }).join("");
+  document.getElementById("nav-qcount").textContent = QUESTIONS.length;
+}
+ 
+function render(){
+  renderNav();
+  const view = document.getElementById("view");
+  if(timerHandle){ clearInterval(timerHandle); timerHandle=null; }
+  if(VIEW==="dashboard") view.innerHTML = renderDashboard();
+  else if(VIEW==="mocktest") renderMockTestEntry(view);
+  else if(VIEW==="practice") view.innerHTML = renderPractice();
+  else if(VIEW==="bank") view.innerHTML = renderBank();
+  else if(VIEW==="progress") view.innerHTML = renderProgress();
+  else if(VIEW==="history") view.innerHTML = renderHistory();
+  else if(VIEW==="settings") view.innerHTML = renderSettings();
+  else if(VIEW==="testing") renderTesting(view);
+  else if(VIEW==="result") view.innerHTML = renderResult();
+  else if(VIEW==="review") view.innerHTML = renderReview();
+}
+ 
+/* =========================================================================
+   DASHBOARD
+   ========================================================================= */
+function aggregateStats(){
+  const stats = getStats();
+  const hist = getHistory();
+  const attemptedQ = Object.keys(stats).filter(id=>stats[id].attempted>0);
+  let totalCorrectAttempts=0, totalIncorrectAttempts=0;
+  attemptedQ.forEach(id=>{ totalCorrectAttempts += stats[id].correct; totalIncorrectAttempts += stats[id].incorrect; });
+  const accuracy = (totalCorrectAttempts+totalIncorrectAttempts)>0 ? (totalCorrectAttempts/(totalCorrectAttempts+totalIncorrectAttempts)*100) : 0;
+  const bestScore = hist.length ? Math.max(...hist.map(h=>h.score)) : 0;
+  const avgScore = hist.length ? (hist.reduce((s,h)=>s+h.score,0)/hist.length) : 0;
+  return {stats, hist, attemptedQ, totalCorrectAttempts, totalIncorrectAttempts, accuracy, bestScore, avgScore};
+}
+ 
+function weekProgressRows(stats){
+  let rows = "";
+  for(let w=1; w<=8; w++){
+    const weekQs = QUESTIONS.filter(q=>q.week===w);
+    const attempted = weekQs.filter(q=>stats[q.id] && stats[q.id].attempted>0).length;
+    const pct = weekQs.length ? Math.round((attempted/weekQs.length)*100) : 0;
+    rows += '<div class="week-row"><div class="wk-label">Week '+w+'</div>'+
+      '<div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div>'+
+      '<div class="wk-pct">'+attempted+'/'+weekQs.length+'</div></div>';
+  }
+  return rows;
+}
+ 
+function renderDashboard(){
+  const {stats, hist, attemptedQ, totalCorrectAttempts, totalIncorrectAttempts, accuracy, bestScore, avgScore} = aggregateStats();
+  const current = getCurrent();
+  const resumeBanner = current ? (
+    '<div class="banner"><div>You have a mock test in progress — Question '+(current.currentIndex+1)+' of '+current.instances.length+'.</div>'+
+    '<div style="display:flex;gap:8px;"><button class="btn btn-primary btn-sm" onclick="navigate(\'testing\')">Resume test</button>'+
+    '<button class="btn btn-ghost btn-sm" onclick="if(confirm(\'Discard the in-progress test?\')){clearCurrent();render();}">Discard</button></div></div>'
+  ) : "";
+ 
+  return '<div class="header-row"><div>'+
+    '<h1 class="page-title">NPTEL Machine Learning — Mock Test</h1>'+
+    '<div class="page-sub">Practice with questions generated from Week 1–8 course materials.</div></div></div>'+
+    resumeBanner+
+    '<div class="grid grid-stats" style="margin-bottom:22px;">'+
+      statCard("Total Questions Available", QUESTIONS.length, "in the question bank")+
+      statCard("Questions Attempted", attemptedQ.length, "of "+QUESTIONS.length+" unique questions")+
+      statCard("Correct Answers", totalCorrectAttempts, "across all attempts")+
+      statCard("Incorrect Answers", totalIncorrectAttempts, "across all attempts")+
+      statCard("Accuracy", fmtPct(accuracy), "overall correctness rate")+
+      statCard("Mock Tests Completed", hist.length, "full test sessions")+
+      statCard("Best Score", fmt1(bestScore), "out of "+ (hist.length? fmt1(hist[0].maxScore): "100")+" marks")+
+      statCard("Average Score", fmt1(avgScore), "across all completed tests")+
+    '</div>'+
+    '<div class="grid grid-2">'+
+      '<div class="card">'+
+        '<h3>Start a mock test</h3>'+
+        '<p class="page-sub" style="margin-bottom:16px;">A fresh, randomly generated 40-question test — different questions and order every time.</p>'+
+        '<button class="btn btn-primary btn-lg btn-block" onclick="navigate(\'mocktest\')">Start New Mock Test</button>'+
+        '<div class="small-note">Default: 40 questions · 2.5 marks each · 100 marks total · '+FULL_MOCK_TIMER_LABEL+' timer</div>'+
+      '</div>'+
+      '<div class="card">'+
+        '<h3>Week progress</h3>'+
+        '<p class="page-sub" style="margin-bottom:6px;">Questions practiced per week.</p>'+
+        weekProgressRows(stats)+
+      '</div>'+
+    '</div>'+
+    '<div class="section-title">Practice modes</div>'+
+    renderPracticeGrid();
+}
+ 
+function statCard(label, value, sub){
+  return '<div class="card stat-card"><div class="stat-label">'+label+'</div><div class="stat-value">'+value+'</div><div class="stat-sub">'+sub+'</div></div>';
+}
+ 
+/* =========================================================================
+   PRACTICE MODES
+   ========================================================================= */
+function renderPracticeGrid(){
+  return '<div class="mode-grid">'+
+    modeCard("Full Mock Test","40 questions · 100 marks","navigate('mocktest')")+
+    modeCard("Quick Practice","10 questions, mixed weeks","startAndGo('quick')")+
+    modeCard("Week-wise Practice","Choose one or more weeks","navigate('practice')")+
+    modeCard("Incorrect Questions","Retry your past mistakes","startAndGo('incorrect')")+
+    modeCard("Numerical Practice","Integer / float questions only","startAndGo('numeric')")+
+    modeCard("MSQ Practice","Multi-select questions only","startAndGo('msq')")+
+  '</div>';
+}
+function modeCard(title, sub, onclick){
+  return '<div class="card mode-card" onclick="'+onclick+'"><h4>'+title+'</h4><p>'+sub+'</p></div>';
+}
+function startAndGo(mode, params){
+  const t = startTest(mode, params);
+  if(!t){
+    alert(mode==="incorrect" ? "No incorrectly-answered questions yet — attempt some questions first!" : "Not enough questions available for this mode with your current settings.");
+    return;
+  }
+  navigate("testing");
+}
+ 
+function renderPractice(){
+  return '<div class="header-row"><div><h1 class="page-title">Quick &amp; Week-wise Practice</h1>'+
+    '<div class="page-sub">Choose a focused practice session.</div></div></div>'+
+    '<div class="grid grid-2">'+
+    '<div class="card"><h3>Quick Practice</h3><p class="page-sub">10 questions across your selected weeks and difficulty (see Settings).</p>'+
+    '<button class="btn btn-primary btn-block" onclick="startAndGo(\'quick\')">Start Quick Practice</button></div>'+
+    '<div class="card"><h3>Numerical / MSQ only</h3><p class="page-sub">Focus on one question format.</p>'+
+    '<div style="display:flex;gap:10px;"><button class="btn btn-block" onclick="startAndGo(\'numeric\')">Numerical (12 Qs)</button>'+
+    '<button class="btn btn-block" onclick="startAndGo(\'msq\')">MSQ (12 Qs)</button></div></div>'+
+    '</div>'+
+    '<div class="card" style="margin-top:14px;"><h3>Week-wise Practice</h3><p class="page-sub">Select one or more weeks, then start.</p>'+
+    '<div class="week-check-grid" id="wk-select">'+
+      [1,2,3,4,5,6,7,8].map(w=>'<label class="week-check"><input type="checkbox" class="wk-cb" value="'+w+'" checked> Week '+w+'</label>').join("")+
+    '</div>'+
+    '<div style="display:flex; gap:10px; align-items:center; margin-top:14px;">'+
+      '<label style="font-size:13px;">Questions: <select class="select" id="wk-count"><option>10</option><option selected>15</option><option>20</option><option>30</option></select></label>'+
+      '<button class="btn btn-primary" onclick="startWeekPractice()">Start</button>'+
+    '</div></div>';
+}
+function startWeekPractice(){
+  const weeks = Array.from(document.querySelectorAll(".wk-cb:checked")).map(cb=>parseInt(cb.value));
+  const count = parseInt(document.getElementById("wk-count").value);
+  if(weeks.length===0){ alert("Select at least one week."); return; }
+  startAndGo("week", {weeks:weeks, count:count});
+}
+ 
+/* =========================================================================
+   MOCK TEST ENTRY / TESTING SCREEN
+   ========================================================================= */
+function renderMockTestEntry(view){
+  const current = getCurrent();
+  if(current && current.mode==="full"){ navigate("testing"); return; }
+  const settings = getSettings();
+  view.innerHTML = '<div class="header-row"><div><h1 class="page-title">Full Mock Test</h1>'+
+    '<div class="page-sub">'+settings.numQuestions+' questions · '+settings.marksPerQ+' marks each · '+
+    fmt1(settings.numQuestions*settings.marksPerQ)+' marks total'+(settings.timerEnabled?(' · '+FULL_MOCK_TIMER_LABEL+' timer'):'')+'</div></div></div>'+
+    '<div class="card" style="text-align:center; padding:40px 20px;">'+
+    '<h3>Ready to begin?</h3>'+
+    '<p class="page-sub" style="max-width:480px;margin:0 auto 20px auto;">Questions are drawn from all 8 weeks with weighted random selection, mixed MCQ / MSQ / Numerical types, and immediate feedback after each question.</p>'+
+    '<button class="btn btn-primary btn-lg" onclick="startAndGo(\'full\')">Start New Mock Test</button>'+
+    '<div class="small-note" style="margin-top:14px;">Difficulty: '+settings.difficulty+' · Weeks included: '+settings.weeks.join(", ")+' — change these in Settings.</div>'+
+    '</div>';
+}
+ 
+function renderTesting(view){
+  const test = getCurrent();
+  if(!test){ navigate("dashboard"); return; }
+  const idx = test.currentIndex;
+  const inst = test.instances[idx];
+  const ans = test.answers[idx];
+  const total = test.instances.length;
+  const correctSoFar = test.answers.filter(a=>a.submitted && a.isCorrect).length;
+  const incorrectSoFar = test.answers.filter(a=>a.submitted && !a.isCorrect).length;
+  const remaining = total - test.answers.filter(a=>a.submitted).length;
+  const scoreSoFar = test.answers.reduce((s,a)=>s+(a.marks||0),0);
+  const maxScore = total*test.marksPerQ;
+  const pct = Math.round(((idx)/total)*100);
+ 
+  let optionsHtml = "";
+  if(inst.type==="mcq"){
+    optionsHtml = inst.options.map(function(opt,i){
+      let cls = "opt";
+      if(ans.submitted){
+        if(inst.correctIdx.includes(i)) cls += " correct";
+        else if(ans.userAnswer===i) cls += " incorrect";
+      } else if(ans.userAnswer===i) cls += " selected";
+      const marker = ans.submitted ? (inst.correctIdx.includes(i)?"&#10003;":(ans.userAnswer===i?"&#10007;":"")) : "";
+      return '<div class="'+cls+'" onclick="'+(ans.submitted?'':'selectMcq('+i+')')+'"><div class="marker">'+marker+'</div><div>'+escapeHtml(opt)+'</div></div>';
+    }).join("");
+  } else if(inst.type==="msq"){
+    optionsHtml = '<div class="badge" style="margin-bottom:10px;">Select all correct answers.</div><div>'+
+    inst.options.map(function(opt,i){
+      const sel = Array.isArray(ans.userAnswer) && ans.userAnswer.includes(i);
+      let cls = "opt msq";
+      if(ans.submitted){
+        if(inst.correctIdx.includes(i)) cls += " correct";
+        else if(sel) cls += " incorrect";
+      } else if(sel) cls += " selected";
+      const marker = ans.submitted ? (inst.correctIdx.includes(i)?"&#10003;":(sel?"&#10007;":"")) : (sel?"&#10003;":"");
+      return '<div class="'+cls+'" onclick="'+(ans.submitted?'':'toggleMsq('+i+')')+'"><div class="marker">'+marker+'</div><div>'+escapeHtml(opt)+'</div></div>';
+    }).join("")+'</div>';
+  } else if(inst.type==="numeric"){
+    const val = ans.submitted ? ans.userAnswer : (window.__numDraft||"");
+    optionsHtml = '<input type="number" step="any" class="num-input" id="num-input" placeholder="Enter your answer" value="'+(val!==null&&val!==undefined?val:"")+'" '+
+      (ans.submitted?'disabled':'oninput="window.__numDraft=this.value"')+'>';
+  }
+ 
+  let feedbackHtml = "";
+  if(ans.submitted){
+    let correctText = "";
+    if(inst.type==="mcq" || inst.type==="msq"){
+      correctText = inst.correctIdx.map(i=>inst.options[i]).join(", ");
+    } else {
+      correctText = inst.numAns.v.toString();
+    }
+    let yourText = "";
+    if(inst.type==="mcq") yourText = (ans.userAnswer!==null && ans.userAnswer!==undefined) ? inst.options[ans.userAnswer] : "(no answer)";
+    else if(inst.type==="msq") yourText = (ans.userAnswer&&ans.userAnswer.length) ? ans.userAnswer.map(i=>inst.options[i]).join(", ") : "(no answer)";
+    else yourText = (ans.userAnswer!==null && ans.userAnswer!=="") ? ans.userAnswer : "(no answer)";
+ 
+    feedbackHtml = '<div class="feedback-panel '+(ans.isCorrect?'ok':'no')+'">'+
+      '<div class="feedback-head">'+(ans.isCorrect?'&#10003; CORRECT':'&#10007; INCORRECT')+'<span style="margin-left:auto;font-weight:700;">'+(ans.isCorrect?('+'+test.marksPerQ):'0')+' marks</span></div>'+
+      (!ans.isCorrect ? '<div class="feedback-row"><b>Your Answer:</b> '+escapeHtml(yourText)+'</div>' : '')+
+      '<div class="feedback-row"><b>Correct Answer:</b> '+escapeHtml(correctText)+'</div>'+
+      '<div class="exp-box"><b>Explanation:</b> '+escapeHtml(inst.exp)+'<br><b>Source:</b> '+escapeHtml(inst.src)+'</div>'+
+      '</div>';
+  }
+ 
+  const timerHtml = test.timerEnabled ? '<div class="timer-box" id="timer-box">'+fmtTime(test.timerRemaining)+'</div>' : "";
+ 
+  view.innerHTML =
+    '<div class="q-top">'+
+      '<div class="q-progress-wrap"><div style="font-size:13px;font-weight:600;white-space:nowrap;">Question '+(idx+1)+' / '+total+'</div>'+
+      '<div class="q-progress-track"><div class="q-progress-fill" style="width:'+pct+'%"></div></div>'+
+      '<div style="font-size:13px;font-weight:600;white-space:nowrap;">Score: '+fmt1(scoreSoFar)+' / '+fmt1(maxScore)+'</div></div>'+
+      timerHtml+
+    '</div>'+
+    '<div class="score-strip"><div>Correct: <b>'+correctSoFar+'</b></div><div>Incorrect: <b>'+incorrectSoFar+'</b></div><div>Remaining: <b>'+remaining+'</b></div></div>'+
+    '<div class="card">'+
+      '<div class="q-tags"><span class="badge badge-accent">Week '+inst.week+'</span><span class="badge">'+inst.type.toUpperCase()+'</span><span class="badge">'+inst.diff+'</span></div>'+
+      '<div class="q-text">'+escapeHtml(inst.question)+'</div>'+
+      '<div id="opts-wrap">'+optionsHtml+'</div>'+
+      (ans.submitted ? "" : '<div style="margin-top:16px;"><button class="btn btn-primary" id="submit-btn" onclick="handleSubmit()">Submit Answer</button></div>')+
+      feedbackHtml+
+      (ans.submitted ? '<div class="footer-actions"><button class="btn btn-primary" onclick="handleNext()">'+(idx+1<total?'Next Question':'Finish Test')+'</button></div>' : '')+
+    '</div>'+
+    '<div style="margin-top:14px;"><button class="btn btn-ghost btn-sm" onclick="if(confirm(\'End the test now? Unanswered questions will be scored as incorrect.\')){window.__forceFinish();}">End test now</button></div>';
+ 
+  if(test.timerEnabled && !timerHandle){
+    timerHandle = setInterval(function(){
+      const t = getCurrent();
+      if(!t){ clearInterval(timerHandle); timerHandle=null; return; }
+      t.timerRemaining--;
+      if(t.timerRemaining<=0){
+        t.timerRemaining = 0;
+        saveCurrent(t);
+        clearInterval(timerHandle); timerHandle=null;
+        const rec = finishTest();
+        VIEW_PARAM = rec;
+        navigate("result");
+        return;
+      }
+      saveCurrent(t);
+      const box = document.getElementById("timer-box");
+      if(box){ box.textContent = fmtTime(t.timerRemaining); if(t.timerRemaining<60) box.classList.add("low"); }
+    }, 1000);
+  }
+}
+window.__forceFinish = function(){
+  const t = getCurrent();
+  if(t){
+    // mark unanswered as submitted-incorrect for scoring purposes (kept unsubmitted=false in details logic)
+  }
+  const rec = finishTest();
+  navigate("result");
+};
+ 
+function selectMcq(i){
+  const test = getCurrent();
+  test.answers[test.currentIndex].userAnswer = i;
+  saveCurrent(test);
+  renderTesting(document.getElementById("view"));
+}
+function toggleMsq(i){
+  const test = getCurrent();
+  const ans = test.answers[test.currentIndex];
+  if(!Array.isArray(ans.userAnswer)) ans.userAnswer = [];
+  const pos = ans.userAnswer.indexOf(i);
+  if(pos>=0) ans.userAnswer.splice(pos,1); else ans.userAnswer.push(i);
+  saveCurrent(test);
+  renderTesting(document.getElementById("view"));
+}
+function handleSubmit(){
+  const test = getCurrent();
+  const inst = test.instances[test.currentIndex];
+  let value;
+  if(inst.type==="numeric"){
+    const el = document.getElementById("num-input");
+    value = el ? el.value : "";
+    if(value===""){ alert("Please enter a numeric answer."); return; }
+  } else if(inst.type==="mcq"){
+    value = test.answers[test.currentIndex].userAnswer;
+    if(value===null || value===undefined){ alert("Please select an option."); return; }
+  } else {
+    value = test.answers[test.currentIndex].userAnswer || [];
+    if(value.length===0){ alert("Please select at least one option."); return; }
+  }
+  window.__numDraft = "";
+  submitAnswer(value);
+  renderTesting(document.getElementById("view"));
+}
+function handleNext(){
+  const test = getCurrent();
+  test.currentIndex++;
+  window.__numDraft = "";
+  if(test.currentIndex>=test.instances.length){
+    saveCurrent(test);
+    const rec = finishTest();
+    navigate("result");
+  } else {
+    saveCurrent(test);
+    renderTesting(document.getElementById("view"));
+  }
+}
+ 
+/* =========================================================================
+   RESULT PAGE
+   ========================================================================= */
+function renderResult(){
+  const hist = getHistory();
+  const rec = VIEW_PARAM || hist[0];
+  if(!rec){ return '<div class="empty-state"><div class="big">&#128203;</div><h3>No test results yet</h3><p>Complete a mock test to see your results here.</p></div>'; }
+ 
+  const weekRows = Object.keys(rec.weekBreakdown).sort((a,b)=>a-b).map(w=>{
+    const wb = rec.weekBreakdown[w];
+    const pct = wb.total? Math.round((wb.correct/wb.total)*100):0;
+    return '<div class="bar-chart-row"><div class="lab">Week '+w+'</div><div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div><div class="val">'+wb.correct+'/'+wb.total+'</div></div>';
+  }).join("");
+ 
+  const typeRows = ["mcq","msq","numeric"].map(t=>{
+    const tb = rec.typeBreakdown[t];
+    if(!tb || tb.total===0) return "";
+    const pct = Math.round((tb.correct/tb.total)*100);
+    return '<div class="bar-chart-row"><div class="lab">'+t.toUpperCase()+'</div><div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div><div class="val">'+tb.correct+'/'+tb.total+'</div></div>';
+  }).join("");
+ 
+  return '<div class="header-row"><div><h1 class="page-title">Mock Test Complete</h1><div class="page-sub">'+fmtDate(rec.date)+'</div></div></div>'+
+  '<div class="card result-hero">'+
+    '<div class="page-sub">SCORE</div>'+
+    '<div class="result-score">'+fmt1(rec.score)+' <span style="font-size:26px;color:var(--ink-soft);">/ '+fmt1(rec.maxScore)+'</span></div>'+
+    '<div class="badge badge-'+(rec.accuracy>=60?'good':'bad')+'" style="font-size:14px;padding:6px 14px;">'+rec.accuracy+'% accuracy</div>'+
+    '<div class="result-grid">'+
+      statCard("Correct", rec.correct, "questions")+
+      statCard("Incorrect", rec.total-rec.correct, "questions")+
+      statCard("Questions", rec.total, "total attempted")+
+      statCard("Time Taken", fmtTimeLong(rec.timeSec), "duration")+
+    '</div>'+
+  '</div>'+
+  '<div class="grid grid-2" style="margin-top:16px;">'+
+    '<div class="card"><h3>Week-wise performance</h3>'+weekRows+'</div>'+
+    '<div class="card"><h3>Question type performance</h3>'+typeRows+'</div>'+
+  '</div>'+
+  '<div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:20px;">'+
+    '<button class="btn" onclick="navigate(\'review\','+ "'" +rec.id+ "'" +')">Review All Questions</button>'+
+    '<button class="btn" onclick="retryIncorrectFrom(\''+rec.id+'\')">Retry Incorrect Questions</button>'+
+    '<button class="btn btn-primary" onclick="startAndGo(\'full\')">Generate New Mock Test</button>'+
+    '<button class="btn btn-ghost" onclick="navigate(\'dashboard\')">Return to Dashboard</button>'+
+  '</div>';
+}
+function retryIncorrectFrom(testId){
+  const hist = getHistory();
+  const rec = hist.find(h=>h.id===testId);
+  if(!rec){ startAndGo("incorrect"); return; }
+  const badIds = rec.details.filter(d=>!d.isCorrect).map(d=>d.qid);
+  if(badIds.length===0){ alert("No incorrect questions in this test — great job!"); return; }
+  const sourcePool = QUESTIONS.filter(q=>badIds.includes(q.id));
+  const instances = buildTest({total:sourcePool.length, weeks:[1,2,3,4,5,6,7,8], difficulty:"Mixed",
+    distMcq:60, distMsq:25, distNum:15, sourcePool});
+  if(instances.length===0){ alert("Could not build a retry test."); return; }
+  const settings = getSettings();
+  const test = {
+    id:"test_"+Date.now(), mode:"incorrect", startTime:Date.now(), marksPerQ:settings.marksPerQ,
+    timerEnabled:false, timerTotalSec:0, timerRemaining:0,
+    instances: instances, currentIndex:0,
+    answers: instances.map(()=>({submitted:false,userAnswer:null,isCorrect:null,marks:0}))
+  };
+  saveCurrent(test);
+  navigate("testing");
+}
+ 
+/* =========================================================================
+   REVIEW PAGE
+   ========================================================================= */
+function renderReview(){
+  const hist = getHistory();
+  const rec = hist.find(h=>h.id===VIEW_PARAM) || hist[0];
+  if(!rec){ return '<div class="empty-state"><div class="big">&#128269;</div><h3>Nothing to review yet</h3></div>'; }
+  const items = rec.details.map((d,i)=>{
+    let yourText, correctText;
+    if(d.type==="mcq"){
+      yourText = (d.userAnswer!==null && d.userAnswer!==undefined) ? d.options[d.userAnswer] : "(no answer)";
+      correctText = d.correctIdx.map(x=>d.options[x]).join(", ");
+    } else if(d.type==="msq"){
+      yourText = (d.userAnswer&&d.userAnswer.length) ? d.userAnswer.map(x=>d.options[x]).join(", ") : "(no answer)";
+      correctText = d.correctIdx.map(x=>d.options[x]).join(", ");
+    } else {
+      yourText = (d.userAnswer!==null && d.userAnswer!=="" && d.userAnswer!==undefined) ? d.userAnswer : "(no answer)";
+      correctText = d.numAns.v;
+    }
+    return '<div class="qbank-item">'+
+      '<div class="qbank-top"><span class="badge badge-accent">Week '+d.week+'</span><span class="badge">'+d.type.toUpperCase()+'</span><span class="badge">'+d.diff+'</span>'+
+      '<span class="badge badge-'+(d.isCorrect?'good':'bad')+'">'+(d.isCorrect?'&#10003; Correct':'&#10007; Incorrect')+'</span>'+
+      '<span class="badge">'+d.marks+' / '+rec.marksPerQ!==undefined?'':''+'</span></div>'+
+      '<div class="qbank-q">Q'+(i+1)+'. '+escapeHtml(d.question)+'</div>'+
+      '<div class="feedback-row" style="margin-top:8px;"><b>Your answer:</b> '+escapeHtml(String(yourText))+'</div>'+
+      '<div class="feedback-row"><b>Correct answer:</b> '+escapeHtml(String(correctText))+'</div>'+
+      '<div class="exp-box"><b>Explanation:</b> '+escapeHtml(d.exp)+' <br><b>Source:</b> '+escapeHtml(d.src)+'</div>'+
+      '</div>';
+  }).join("");
+  return '<div class="header-row"><div><h1 class="page-title">Review Questions</h1><div class="page-sub">'+fmtDate(rec.date)+' · Score '+fmt1(rec.score)+'/'+fmt1(rec.maxScore)+'</div></div>'+
+    '<button class="btn btn-ghost" onclick="navigate(\'result\')">Back to result</button></div>'+
+    '<div class="card" style="padding:6px 0;">'+items+'</div>';
+}
+ 
+/* =========================================================================
+   QUESTION BANK
+   ========================================================================= */
+let BANK_FILTERS = {week:null, type:null, status:null, search:""};
+function renderBank(){
+  const stats = getStats();
+  const total = QUESTIONS.length;
+  const mcqCount = QUESTIONS.filter(q=>q.type==="mcq").length;
+  const msqCount = QUESTIONS.filter(q=>q.type==="msq").length;
+  const numCount = QUESTIONS.filter(q=>q.type==="numeric").length;
+ 
+  let filtered = QUESTIONS.filter(q=>{
+    if(BANK_FILTERS.week && q.week!==BANK_FILTERS.week) return false;
+    if(BANK_FILTERS.type && q.type!==BANK_FILTERS.type) return false;
+    if(BANK_FILTERS.status){
+      const st = stats[q.id];
+      if(BANK_FILTERS.status==="unattempted" && st && st.attempted>0) return false;
+      if(BANK_FILTERS.status==="correct" && !(st && st.lastCorrect===true)) return false;
+      if(BANK_FILTERS.status==="incorrect" && !(st && st.lastCorrect===false)) return false;
+    }
+    if(BANK_FILTERS.search && !q.q.toLowerCase().includes(BANK_FILTERS.search.toLowerCase())) return false;
+    return true;
+  });
+ 
+  const weekChips = [1,2,3,4,5,6,7,8].map(w=>chip("W"+w, BANK_FILTERS.week===w, "setBankFilter('week',"+w+")")).join("");
+  const typeChips = ["mcq","msq","numeric"].map(t=>chip(t.toUpperCase(), BANK_FILTERS.type===t, "setBankFilter('type','"+t+"')")).join("");
+  const statusChips = [["correct","Correct"],["incorrect","Incorrect"],["unattempted","Unattempted"]].map(s=>chip(s[1], BANK_FILTERS.status===s[0], "setBankFilter('status','"+s[0]+"')")).join("");
+ 
+  const items = filtered.slice(0,300).map(q=>{
+    const st = stats[q.id];
+    let statusBadge = '<span class="badge">Unattempted</span>';
+    if(st && st.attempted>0){
+      statusBadge = st.lastCorrect ? '<span class="badge badge-good">&#10003; Correct</span>' : '<span class="badge badge-bad">&#10007; Incorrect</span>';
+    }
+    return '<div class="qbank-item"><div class="qbank-top"><span class="badge badge-accent">Week '+q.week+'</span><span class="badge">'+q.type.toUpperCase()+'</span><span class="badge">'+q.diff+'</span>'+statusBadge+'</div>'+
+      '<div class="qbank-q">'+escapeHtml(q.q)+'</div></div>';
+  }).join("");
+ 
+  return '<div class="header-row"><div><h1 class="page-title">Question Bank</h1><div class="page-sub">Every question is traceable to the uploaded Week 1–8 course PDFs.</div></div></div>'+
+    '<div class="grid grid-stats" style="margin-bottom:20px;">'+
+      statCard("Total Questions", total, "in the bank")+
+      statCard("MCQs", mcqCount, "single-answer")+
+      statCard("MSQs", msqCount, "multi-select")+
+      statCard("Numerical", numCount, "integer / float")+
+    '</div>'+
+    '<input class="search-input" placeholder="Search questions by keyword…" value="'+escapeHtml(BANK_FILTERS.search)+'" oninput="setBankSearch(this.value)">'+
+    '<div class="filter-bar">'+weekChips+'</div>'+
+    '<div class="filter-bar">'+typeChips+statusChips+'<span class="chip" onclick="clearBankFilters()">Clear filters</span></div>'+
+    '<div class="card" style="padding:4px 0;">'+(items || '<div class="empty-state">No questions match these filters.</div>')+'</div>'+
+    (filtered.length>300 ? '<div class="small-note" style="margin-top:8px;">Showing first 300 of '+filtered.length+' matches.</div>' : '');
+}
+function chip(label, active, onclick){
+  return '<span class="chip '+(active?'active':'')+'" onclick="'+onclick+'">'+label+'</span>';
+}
+function setBankFilter(key, val){
+  BANK_FILTERS[key] = (BANK_FILTERS[key]===val) ? null : val;
+  render();
+}
+function setBankSearch(v){ BANK_FILTERS.search = v; document.getElementById("view").innerHTML = renderBank(); }
+function clearBankFilters(){ BANK_FILTERS = {week:null,type:null,status:null,search:""}; render(); }
+ 
+/* =========================================================================
+   PROGRESS / ANALYTICS
+   ========================================================================= */
+function renderProgress(){
+  const stats = getStats();
+  const hist = getHistory().slice().reverse(); // chronological
+ 
+  const scoreRows = hist.length ? hist.slice(-10).map((h,i)=>{
+    const pct = h.maxScore? Math.round((h.score/h.maxScore)*100) : 0;
+    return '<div class="bar-chart-row"><div class="lab">Test '+(hist.length-10+i+1>0?hist.length-Math.max(0,hist.length-10)+i+1:i+1)+'</div><div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div><div class="val">'+fmt1(h.score)+'</div></div>';
+  }).join("") : '<div class="empty-state">Complete a mock test to see score trends.</div>';
+ 
+  const accRows = hist.length ? hist.slice(-10).map((h,i)=>{
+    return '<div class="bar-chart-row"><div class="lab">Test '+(i+1)+'</div><div class="progress-track"><div class="progress-fill" style="width:'+h.accuracy+'%"></div></div><div class="val">'+h.accuracy+'%</div></div>';
+  }).join("") : '';
+ 
+  const weekAcc = [];
+  for(let w=1; w<=8; w++){
+    const weekQs = QUESTIONS.filter(q=>q.week===w);
+    let correct=0, attempted=0;
+    weekQs.forEach(q=>{ const st = stats[q.id]; if(st && st.attempted>0){ attempted += st.attempted; correct += st.correct; }});
+    weekAcc.push({week:w, pct: attempted? Math.round((correct/attempted)*100) : null, attempted});
+  }
+  const weekAccRows = weekAcc.map(w=>{
+    const pct = w.pct===null ? 0 : w.pct;
+    return '<div class="bar-chart-row"><div class="lab">Week '+w.week+'</div><div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div><div class="val">'+(w.pct===null?'—':pct+'%')+'</div></div>';
+  }).join("");
+ 
+  const typeAcc = ["mcq","msq","numeric"].map(t=>{
+    const qs = QUESTIONS.filter(q=>q.type===t);
+    let correct=0, attempted=0;
+    qs.forEach(q=>{ const st=stats[q.id]; if(st&&st.attempted>0){attempted+=st.attempted; correct+=st.correct;}});
+    return {t, pct: attempted? Math.round((correct/attempted)*100): null};
+  });
+  const typeAccRows = typeAcc.map(o=>{
+    const pct = o.pct===null?0:o.pct;
+    return '<div class="bar-chart-row"><div class="lab">'+o.t.toUpperCase()+'</div><div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div><div class="val">'+(o.pct===null?'—':pct+'%')+'</div></div>';
+  }).join("");
+ 
+  const diffAcc = ["Easy","Medium","Hard"].map(d=>{
+    const qs = QUESTIONS.filter(q=>q.diff===d);
+    let correct=0, attempted=0;
+    qs.forEach(q=>{ const st=stats[q.id]; if(st&&st.attempted>0){attempted+=st.attempted; correct+=st.correct;}});
+    return {d, pct: attempted? Math.round((correct/attempted)*100): null};
+  });
+  const diffAccRows = diffAcc.map(o=>{
+    const pct = o.pct===null?0:o.pct;
+    return '<div class="bar-chart-row"><div class="lab">'+o.d+'</div><div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div><div class="val">'+(o.pct===null?'—':pct+'%')+'</div></div>';
+  }).join("");
+ 
+  const needsPractice = weekAcc.filter(w=>w.attempted>0).sort((a,b)=>a.pct-b.pct).slice(0,3);
+  const needsHtml = needsPractice.length ? needsPractice.map(w=>
+    '<div class="history-item" onclick="startAndGo(\'week\',{weeks:['+w.week+'],count:15})"><div><b>Week '+w.week+'</b> — '+WEEK_TITLES[w.week]+'<div class="small-note">Accuracy '+w.pct+'%</div></div><span class="badge">Practice &rarr;</span></div>'
+  ).join("") : '<div class="empty-state">Attempt some questions to see personalised recommendations.</div>';
+ 
+  return '<div class="header-row"><div><h1 class="page-title">Progress Analytics</h1><div class="page-sub">Based only on your actual performance in this browser.</div></div></div>'+
+    '<div class="grid grid-2">'+
+      '<div class="card"><h3>Score over time</h3>'+scoreRows+'</div>'+
+      '<div class="card"><h3>Accuracy over time</h3>'+(accRows || '<div class="empty-state">No data yet.</div>')+'</div>'+
+    '</div>'+
+    '<div class="grid grid-2" style="margin-top:14px;">'+
+      '<div class="card"><h3>Week-wise accuracy</h3>'+weekAccRows+'</div>'+
+      '<div class="grid" style="gap:14px;">'+
+        '<div class="card"><h3>Question-type performance</h3>'+typeAccRows+'</div>'+
+        '<div class="card"><h3>Difficulty performance</h3>'+diffAccRows+'</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="section-title">Topics that need more practice</div>'+
+    '<div class="card" style="padding:4px 0;">'+needsHtml+'</div>';
+}
+ 
+/* =========================================================================
+   HISTORY
+   ========================================================================= */
+function renderHistory(){
+  const hist = getHistory();
+  if(hist.length===0){
+    return '<div class="header-row"><div><h1 class="page-title">Test History</h1></div></div>'+
+      '<div class="empty-state"><div class="big">&#128196;</div><h3>No completed tests yet</h3><p>Your mock test history will appear here.</p></div>';
+  }
+  const items = hist.map((h,i)=>{
+    const modeLabel = {full:"Full Mock Test", quick:"Quick Practice", week:"Week Practice", numeric:"Numerical Practice", msq:"MSQ Practice", incorrect:"Retry Incorrect"}[h.mode] || h.mode;
+    return '<div class="history-item" onclick="navigate(\'result\',getHistory()['+i+'])">'+
+      '<div><b>Mock Test #'+(hist.length-i)+'</b> <span class="badge" style="margin-left:6px;">'+modeLabel+'</span>'+
+      '<div class="small-note">'+fmtDate(h.date)+'</div></div>'+
+      '<div style="text-align:right;"><div style="font-weight:700;">'+fmt1(h.score)+'/'+fmt1(h.maxScore)+'</div><div class="small-note">'+h.accuracy+'% accuracy</div></div>'+
+      '</div>';
+  }).join("");
+  return '<div class="header-row"><div><h1 class="page-title">Test History</h1><div class="page-sub">'+hist.length+' completed test'+(hist.length===1?'':'s')+'. Click any entry to review it.</div></div></div>'+
+    '<div class="card" style="padding:4px 10px;">'+items+'</div>';
+}
+ 
+/* =========================================================================
+   SETTINGS
+   ========================================================================= */
+function renderSettings(){
+  const s = getSettings();
+  const weekChecks = [1,2,3,4,5,6,7,8].map(w=>
+    '<label class="week-check"><input type="checkbox" class="set-week-cb" value="'+w+'" '+(s.weeks.includes(w)?'checked':'')+' onchange="updateSettingWeeks()"> Week '+w+'</label>'
+  ).join("");
+  return '<div class="header-row"><div><h1 class="page-title">Settings</h1><div class="page-sub">Configure your mock test defaults. Changes save automatically.</div></div></div>'+
+  '<div class="card">'+
+    settingsRow("Number of questions","Per full mock test.", '<select class="select" onchange="updateSetting(\'numQuestions\',parseInt(this.value))">'+[20,30,40,50].map(n=>'<option value="'+n+'" '+(s.numQuestions===n?'selected':'')+'>'+n+'</option>').join("")+'</select>')+
+    settingsRow("Marks per question","Awarded for each correct answer.", '<select class="select" onchange="updateSetting(\'marksPerQ\',parseFloat(this.value))">'+[1,2,2.5,5].map(n=>'<option value="'+n+'" '+(s.marksPerQ===n?'selected':'')+'>'+n+'</option>').join("")+'</select>')+
+    settingsRow("Total marks","Computed automatically.", '<b>'+fmt1(s.numQuestions*s.marksPerQ)+'</b>')+
+    settingsRow("Timer duration","Fixed duration for every full mock test.", '<b>'+FULL_MOCK_TIMER_LABEL+'</b>')+
+    settingsRow("Enable timer","Auto-submit the test when time runs out.", toggle("timerEnabled", s.timerEnabled))+
+    settingsRow("Immediate answer feedback","Show correct answer & explanation right after each submission.", toggle("immediateFeedback", s.immediateFeedback))+
+    settingsRow("Difficulty","Filter question difficulty for new tests.", '<div class="diff-row" style="margin:0;">'+["Easy","Medium","Hard","Mixed"].map(d=>'<button class="diff-btn '+(s.difficulty===d?'active':'')+'" onclick="updateSetting(\'difficulty\',\''+d+'\')">'+d+'</button>').join("")+'</div>')+
+  '</div>'+
+  '<div class="card" style="margin-top:14px;">'+
+    '<div class="settings-label">Question distribution (%)</div><div class="settings-hint">Approximate mix for a full mock test. Values are normalised automatically.</div>'+
+    '<div style="display:flex; gap:16px; margin-top:12px; flex-wrap:wrap;">'+
+      distInput("MCQ","distMcq",s.distMcq)+distInput("MSQ","distMsq",s.distMsq)+distInput("Numerical","distNum",s.distNum)+
+    '</div>'+
+  '</div>'+
+  '<div class="card" style="margin-top:14px;">'+
+    '<div class="settings-label">Week selection</div><div class="settings-hint">Weeks included when generating a full mock test or quick practice.</div>'+
+    '<div class="week-check-grid">'+weekChecks+'</div>'+
+  '</div>'+
+  '<div class="card" style="margin-top:14px;">'+
+    '<div class="settings-label">Reset data</div><div class="settings-hint">Clears all stats, history, and settings stored in this browser.</div>'+
+    '<button class="btn btn-danger" style="margin-top:10px;" onclick="resetAllData()">Reset all data</button>'+
+  '</div>';
+}
+function settingsRow(label, hint, control){
+  return '<div class="settings-row"><div><div class="settings-label">'+label+'</div><div class="settings-hint">'+hint+'</div></div><div>'+control+'</div></div>';
+}
+function toggle(key, val){
+  return '<label class="switch"><input type="checkbox" '+(val?'checked':'')+' onchange="updateSetting(\''+key+'\',this.checked)"><span class="slider-toggle"></span></label>';
+}
+function distInput(label, key, val){
+  return '<div><div class="settings-hint" style="margin-bottom:4px;">'+label+'</div><input type="number" class="number-input" style="width:70px;" value="'+val+'" onchange="updateSetting(\''+key+'\',parseInt(this.value)||0)"></div>';
+}
+function updateSetting(key, val){
+  const s = getSettings();
+  s[key] = val;
+  saveSettings(s);
+  render();
+}
+function updateSettingWeeks(){
+  const weeks = Array.from(document.querySelectorAll(".set-week-cb:checked")).map(cb=>parseInt(cb.value));
+  const s = getSettings();
+  s.weeks = weeks.length ? weeks : [1,2,3,4,5,6,7,8];
+  saveSettings(s);
+}
+function resetAllData(){
+  if(!confirm("This will permanently clear all your progress, history, and settings in this browser. Continue?")) return;
+  try{
+    localStorage.removeItem(LS.STATS); localStorage.removeItem(LS.HISTORY);
+    localStorage.removeItem(LS.SETTINGS); localStorage.removeItem(LS.CURRENT); localStorage.removeItem(LS.RECENT);
+  }catch(e){}
+  navigate("dashboard");
+}
+ 
+/* =========================================================================
+   INIT
+   ========================================================================= */
+(function init(){
+  const t = lsGet(LS.THEME, "auto");
+  if(t!=="auto") document.documentElement.setAttribute("data-theme", t);
+  updateThemeButtons();
+  render();
+})();
+</script>
+</body>
+</html>
